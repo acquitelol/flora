@@ -40,25 +40,22 @@ NSString *hexStringFromColor(UIColor *color) {
             || [name containsString:@"_"] 
             || [name isEqualToString:@"clearColor"]
         ) {
-            NSLog(@"[Flora1] Skipping color %@", name);
             continue;
         };
 
-        NSLog(@"[Flora2] Swizzling color %@", name);
+        __block UIColor *(*originalColorWithCGColor)(id self, SEL _cmd);
 
-        // __block UIColor *(*originalColorWithCGColor)(id self, SEL _cmd);
-
-        // MSHookMessageEx(
-        //     uiColorClass,
-        //     selector,
-        //     imp_implementationWithBlock(^(id self, SEL _cmd) {
-        //         UIColor *originalColor = originalColorWithCGColor(self, _cmd);
-        //         NSString *originalColorHex = hexStringFromColor(originalColor);
+        MSHookMessageEx(
+            uiColorClass,
+            selector,
+            imp_implementationWithBlock(^(id self, SEL _cmd) {
+                UIColor *originalColor = originalColorWithCGColor(self, _cmd);
+                NSString *originalColorHex = hexStringFromColor(originalColor);
                 
-        //         return [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:name fallback:originalColorHex];
-        //     }),
-        //     (IMP *)&originalColorWithCGColor
-        // );
+                return [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:name fallback:originalColorHex];
+            }),
+            (IMP *)&originalColorWithCGColor
+        );
         
         free((void *)returnType);
     }

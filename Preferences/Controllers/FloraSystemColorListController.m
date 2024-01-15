@@ -29,26 +29,35 @@ static NSString *parseName(NSString *name) {
             NSString *name = NSStringFromSelector(selector);
             NSString *parsedName = parseName(name);
 
-            if ([name hasPrefix:@"system"] && [name hasSuffix:@"Color"]) {
-                id colorInstance = [UIColor performSelector:selector];
-                NSString *hexColor = [self hexStringFromColor:colorInstance];
+            const char *returnType = method_copyReturnType(method);
+            if ((strcmp(returnType, @encode(UIColor *)) != 0) 
+                || ![name hasPrefix:@"system"]
+                || ![name hasSuffix:@"Color"] 
+                || [name isEqualToString:@"clearColor"]
+            ) {
+                continue;
+            };
 
-                PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:parsedName
-                                                                  target:self
-                                                                     set:@selector(setPreferenceValue:specifier:)
-                                                                     get:@selector(readPreferenceValue:)
-                                                                  detail:nil
-                                                                    cell:PSLinkCell
-                                                                    edit:nil];
+            id colorInstance = [UIColor performSelector:selector];
+            NSString *hexColor = [self hexStringFromColor:colorInstance];
 
-                [specifier setProperty:[GcColorPickerCell class] forKey:@"cellClass"];
-                [specifier setProperty:hexColor forKey:@"fallback"];
-                [specifier setProperty:@1 forKey:@"style"];
-                [specifier setProperty:parsedName forKey:@"label"];
-                [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
-                [specifier setProperty:name forKey:@"key"];
-                [_specifiers addObject:specifier];
-            }
+            PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:parsedName
+                                                                target:self
+                                                                    set:@selector(setPreferenceValue:specifier:)
+                                                                    get:@selector(readPreferenceValue:)
+                                                                detail:nil
+                                                                cell:PSLinkCell
+                                                                edit:nil];
+
+            [specifier setProperty:[GcColorPickerCell class] forKey:@"cellClass"];
+            [specifier setProperty:hexColor forKey:@"fallback"];
+            [specifier setProperty:@1 forKey:@"style"];
+            [specifier setProperty:parsedName forKey:@"label"];
+            [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
+            [specifier setProperty:name forKey:@"key"];
+            [_specifiers addObject:specifier];
+
+            free((void *)returnType);
         }
 
         free(methods);

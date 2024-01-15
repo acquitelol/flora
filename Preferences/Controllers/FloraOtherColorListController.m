@@ -1,5 +1,18 @@
 #include "FloraOtherColorListController.h"
 
+static NSString *parseName(NSString *name) {
+    NSString *capitalizedName = [name stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[name substringToIndex:1] capitalizedString]];
+    NSString *nameWithoutColor = [capitalizedName stringByReplacingOccurrencesOfString:@"Color" withString:@""];
+
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"([a-z])([A-Z])" options:0 error:nil];
+    NSString *stringSplitIntoSpaces = [regex stringByReplacingMatchesInString:nameWithoutColor
+                                                           options:0
+                                                             range:NSMakeRange(0, [nameWithoutColor length])
+                                                      withTemplate:@"$1 $2"];
+
+    return stringSplitIntoSpaces;
+}
+
 @implementation FloraOtherColorListController
 
 - (NSArray *)specifiers {
@@ -14,27 +27,38 @@
             Method method = methods[i];
             SEL selector = method_getName(method);
             NSString *name = NSStringFromSelector(selector);
+            NSString *parsedName = parseName(name);
 
-            if (![name hasPrefix:@"system"] && ![name containsString:@"_"] && [name hasSuffix:@"Color"]) {
-                id colorInstance = [UIColor performSelector:selector];
-                NSString *hexColor = [self hexStringFromColor:colorInstance];
+            const char *returnType = method_copyReturnType(method);
+            if ((strcmp(returnType, @encode(UIColor *)) != 0) 
+                || ![name hasSuffix:@"Color"] 
+                || [name hasPrefix:@"system"]
+                || [name containsString:@"_"] 
+                || [name isEqualToString:@"clearColor"]
+            ) {
+                continue;
+            };
 
-                PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:name
-                                                                  target:self
-                                                                     set:@selector(setPreferenceValue:specifier:)
-                                                                     get:@selector(readPreferenceValue:)
-                                                                  detail:nil
-                                                                    cell:PSLinkCell
-                                                                    edit:nil];
+            id colorInstance = [UIColor performSelector:selector];
+            NSString *hexColor = [self hexStringFromColor:colorInstance];
 
-                [specifier setProperty:[GcColorPickerCell class] forKey:@"cellClass"];
-                [specifier setProperty:hexColor forKey:@"fallback"];
-                [specifier setProperty:@1 forKey:@"style"];
-                [specifier setProperty:name forKey:@"label"];
-                [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
-                [specifier setProperty:name forKey:@"key"];
-                [_specifiers addObject:specifier];
-            }
+            PSSpecifier *specifier = [PSSpecifier preferenceSpecifierNamed:parsedName
+                                                                target:self
+                                                                    set:@selector(setPreferenceValue:specifier:)
+                                                                    get:@selector(readPreferenceValue:)
+                                                                detail:nil
+                                                                cell:PSLinkCell
+                                                                edit:nil];
+
+            [specifier setProperty:[GcColorPickerCell class] forKey:@"cellClass"];
+            [specifier setProperty:hexColor forKey:@"fallback"];
+            [specifier setProperty:@1 forKey:@"style"];
+            [specifier setProperty:parsedName forKey:@"label"];
+            [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
+            [specifier setProperty:name forKey:@"key"];
+            [_specifiers addObject:specifier];
+
+            free((void *)returnType);
         }
 
         free(methods);
