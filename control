@@ -1,0 +1,9 @@
+Package: com.rosiepie.flora
+Name: Flora
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: Customize all of your UI colors
+Maintainer: Rosie
+Author: Rosie
+Section: Tweaks
+Depends: firmware (>= 14.0), mobilesubstrate (>= 0.9.5000), preferenceloader (>= 2.2.3), com.mrgcgamer.libgcuniversal
