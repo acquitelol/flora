@@ -1,5 +1,5 @@
 TWEAK_NAME = Flora
-Flora_FILES = Flora.x
+Flora_FILES = $(wildcard *.x *.m)
 Flora_CFLAGS = -fobjc-arc
 Flora_FRAMEWORKS = UIKit
 Flora_LIBRARIES = gcuniversal

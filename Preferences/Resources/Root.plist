@@ -14,7 +14,7 @@
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
-			<string>Enable Flora</string>
+			<string>Turn on Flora</string>
 		</dict>
 
         <dict>

@@ -2,7 +2,6 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 #import <substrate.h>
-#import <GcUniversal/GcColorPickerUtils.h>
-#import "Constants.h"
+#import "Utilities.h"
 
 NSUserDefaults* preferences;

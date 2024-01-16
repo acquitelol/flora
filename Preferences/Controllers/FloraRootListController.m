@@ -24,35 +24,17 @@
 }
 
 - (void)promptToRespring {
-    UIAlertController *resetAlert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
-                                                                        message:@"Are you sure you want to respring?" 
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
         [self respring];
     }];
 
-	UIAlertAction *stopAction = [UIAlertAction actionWithTitle:@"No thanks" style:UIAlertActionStyleCancel handler:nil];
-
-	[resetAlert addAction:continueAction];
-	[resetAlert addAction:stopAction];
-
-	[self presentViewController:resetAlert animated:YES completion:nil];
+	[self presentViewController:respringAlert animated:YES completion:nil];
 }
 
 - (void)promptToReset {
-    UIAlertController *resetAlert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
-                                                                        message:@"Are you sure you want to reset your preferences?" 
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+    UIAlertController *resetAlert = [Utilities alertWithDescription:@"Are you sure you want to reset your preferences?" handler:^{
         [self resetPreferences];
-	}];
-
-	UIAlertAction *stopAction = [UIAlertAction actionWithTitle:@"No thanks" style:UIAlertActionStyleCancel handler:nil];
-
-	[resetAlert addAction:continueAction];
-	[resetAlert addAction:stopAction];
+    }];
 
 	[self presentViewController:resetAlert animated:YES completion:nil];
 }

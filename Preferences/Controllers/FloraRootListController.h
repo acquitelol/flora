@@ -6,7 +6,7 @@
 #import <rootless.h>
 #import <objc/runtime.h>
 #import <sys/sysctl.h>
-#import "../../Tweak/Constants.h"
+#import "../../Tweak/Utilities.h"
 
 @interface FloraRootListController : PSListController
 @end
