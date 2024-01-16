@@ -49,6 +49,10 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Utilities</string>
+            <key>footerText</key>
+			<string>Created with &lt;3 by Rosie</string>
+            <key>isStaticText</key>
+			<true />
 		</dict>
         <dict>
 			<key>cell</key>
