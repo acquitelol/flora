@@ -16,14 +16,6 @@
     [self setLastSearchBarTextLength:0];
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-
-    [self reloadSpecifiers];
-    [((FloraColorListController *)self).navigationItem.searchController setActive:NO];
-    [self setLastSearchBarTextLength:0];
-}
-
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [searchBar setShowsCancelButton:YES animated:YES];
 }
@@ -38,17 +30,16 @@
     }
 
     if ([text length] > 0) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            for (PSSpecifier *specifier in [self valueForKey:@"_specifiers"]) {
-                NSRange titleRange = [specifier.name rangeOfString:text options:NSCaseInsensitiveSearch];
-                
-                if ([specifier.name length] > 0 && titleRange.location == NSNotFound) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self removeSpecifier:specifier];
-                    });
-                }
-            }            
-        });
+        NSMutableArray *specifiersToKeep = [NSMutableArray array];
+        
+        for (PSSpecifier *specifier in [self valueForKey:@"_specifiers"]) {
+            if ([specifier.name length] > 0 && [[specifier.name lowercaseString] containsString:[text lowercaseString]]) {
+                [specifiersToKeep addObject:specifier];
+            }
+        }
+
+        [self setSpecifiers:specifiersToKeep];
+        [self reload];
     }
 
     [self setLastSearchBarTextLength:[text length]];

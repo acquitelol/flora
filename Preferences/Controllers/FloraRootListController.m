@@ -24,7 +24,7 @@
 }
 
 - (void)promptToRespring {
-    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
+    UIAlertController *respringAlert = [self alertWithDescription:@"Are you sure you want to respring?"  handler:^{
         [self respring];
     }];
 
@@ -32,7 +32,7 @@
 }
 
 - (void)promptToReset {
-    UIAlertController *resetAlert = [Utilities alertWithDescription:@"Are you sure you want to reset your preferences?" handler:^{
+    UIAlertController *resetAlert = [self alertWithDescription:@"Are you sure you want to reset your preferences?" handler:^{
         [self resetPreferences];
     }];
 
@@ -51,7 +51,7 @@
                                                                         message:@"Successfully cleared preferences." 
                                                                         preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"Okay" style:UIAlertActionStyleCancel handler:nil];
 
 	[doneAlert addAction:okayAction];
 	[self presentViewController:doneAlert animated:YES completion:nil];
@@ -123,6 +123,25 @@ void enumerateProcessesUsingBlock(void (^enumerator)(pid_t pid, NSString *execut
             kill(pid, SIGTERM);
         }
     });
+}
+
+- (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
+                                                                        message:description
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+        if (handler) {
+            handler();
+        }
+	}];
+
+	UIAlertAction *stopAction = [UIAlertAction actionWithTitle:@"No thanks" style:UIAlertActionStyleCancel handler:nil];
+
+	[alert addAction:continueAction];
+	[alert addAction:stopAction];
+
+    return alert;
 }
 
 @end

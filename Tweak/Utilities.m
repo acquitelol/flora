@@ -59,23 +59,4 @@ static int compareMethods(const void *method1, const void *method2) {
     return [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
 }
 
-+ (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
-                                                                        message:description
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
-
-    UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
-        if (handler) {
-            handler();
-        }
-	}];
-
-	UIAlertAction *stopAction = [UIAlertAction actionWithTitle:@"No thanks" style:UIAlertActionStyleCancel handler:nil];
-
-	[alert addAction:continueAction];
-	[alert addAction:stopAction];
-
-    return alert;
-}
-
 @end

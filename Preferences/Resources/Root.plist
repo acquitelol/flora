@@ -14,7 +14,12 @@
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
-			<string>Turn on Flora</string>
+			<string>Enable Flora</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>camera.macro</string>
+            </dict>
 		</dict>
 
         <dict>
@@ -23,6 +28,21 @@
 			<key>label</key>
 			<string>Colors</string>
 		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>detail</key>
+            <string>FloraBaseColorListController</string>
+            <key>label</key>
+            <string>Base Colors</string>
+            <key>isController</key>
+	        <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>sparkles</string>
+            </dict>
+        </dict>
 		<dict>
             <key>cell</key>
             <string>PSLinkCell</string>
@@ -31,7 +51,57 @@
             <key>label</key>
             <string>System Colors</string>
             <key>isController</key>
+            <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>sparkles.square.filled.on.square</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>detail</key>
+            <string>FloraDynamicColorListController</string>
+            <key>label</key>
+            <string>Dynamic Colors</string>
+            <key>isController</key>
 	        <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>arrow.up.and.down.and.sparkles</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>detail</key>
+            <string>FloraExternalColorListController</string>
+            <key>label</key>
+            <string>External Colors</string>
+            <key>isController</key>
+	        <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>paperplane.fill</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>detail</key>
+            <string>FloraTableColorListController</string>
+            <key>label</key>
+            <string>Table Colors</string>
+            <key>isController</key>
+	        <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>swatchpalette.fill</string>
+            </dict>
         </dict>
         <dict>
             <key>cell</key>
@@ -42,6 +112,11 @@
             <string>Other Colors</string>
             <key>isController</key>
 	        <true/>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>bubbles.and.sparkles.fill</string>
+            </dict>
         </dict>
 
         <dict>
@@ -49,10 +124,6 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Utilities</string>
-            <key>footerText</key>
-			<string>Created with &lt;3 by Rosie</string>
-            <key>isStaticText</key>
-			<true />
 		</dict>
         <dict>
 			<key>cell</key>
@@ -61,6 +132,11 @@
 			<string>Respring</string>
 			<key>action</key>
 			<string>promptToRespring</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>slowmo</string>
+            </dict>
 		</dict>
         <dict>
 			<key>cell</key>
@@ -69,7 +145,39 @@
 			<string>Reset Preferences</string>
 			<key>action</key>
 			<string>promptToReset</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>trash.fill</string>
+            </dict>
 		</dict>
+
+        <dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Source</string>
+            <key>footerText</key>
+			<string>Created with &lt;3 by Rosie</string>
+            <key>isStaticText</key>
+			<true />
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>cellClass</key>
+            <string>GcSocialCell</string>
+            <key>userName</key>
+            <string>Source Code</string>
+            <key>subtitle</key>
+            <string>You can view the source of my terrible code!</string>
+            <key>accessoryType</key>
+            <integer>1</integer>
+            <key>pfpURL</key>
+            <string>https://github.com/acquitelol.png</string>
+            <key>URL</key>
+            <string>https://github.com/acquitelol/flora</string>
+        </dict>
 	</array>
 	<key>title</key>
 	<string>Flora</string>

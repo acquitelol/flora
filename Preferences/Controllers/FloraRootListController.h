@@ -8,5 +8,8 @@
 #import <sys/sysctl.h>
 #import "../../Tweak/Utilities.h"
 
-@interface FloraRootListController : PSListController
+@interface HBListController : PSListController
+@end
+
+@interface FloraRootListController : HBListController
 @end

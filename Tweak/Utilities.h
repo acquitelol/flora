@@ -10,7 +10,6 @@
 @interface Utilities : NSObject
 + (void)loopUIColorWithBlock:(void (^)(SEL selector, NSString *name, Method method, Class uiColorClass))block;
 + (NSString *)hexStringFromColor:(UIColor *)color;
-+ (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))block;
 @end
 
 @interface GcColorPickerCell : PSTableCell

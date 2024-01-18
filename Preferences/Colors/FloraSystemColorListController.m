@@ -1,4 +1,7 @@
-#import "FloraSystemColorListController.h"
+#import "../Controllers/FloraColorListController.h"
+
+@interface FloraSystemColorListController : FloraColorListController
+@end
 
 @implementation FloraSystemColorListController
 
