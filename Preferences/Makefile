@@ -1,5 +1,5 @@
 BUNDLE_NAME = FloraPreferences
-FloraPreferences_FILES = $(wildcard Controllers/*.m ../Tweak/Utilities.m Colors/*.m)
+FloraPreferences_FILES = $(wildcard Controllers/*.m ../Tweak/Utilities.m Colors/*.m Cells/*.m Observers/*.m)
 FloraPreferences_FRAMEWORKS = UIKit
 FloraPreferences_PRIVATE_FRAMEWORKS = Preferences
 FloraPreferences_INSTALL_PATH = /Library/PreferenceBundles

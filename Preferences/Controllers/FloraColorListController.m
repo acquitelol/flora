@@ -64,6 +64,7 @@
     [specifier setProperty:@1 forKey:@"style"];
     [specifier setProperty:parsedName forKey:@"label"];
     [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
+    [specifier setProperty:[UIImage systemImageNamed:@"paintpalette.fill"] forKey:@"iconImageSystem"];
     [specifier setProperty:name forKey:@"key"];
 
     return specifier;

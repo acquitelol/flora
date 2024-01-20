@@ -1,10 +1,26 @@
 #include "FloraRootListController.h"
 
-@implementation FloraRootListController
+@implementation FloraRootListController {
+    FloraPreferenceObserver *observer;
+}
+
+- (instancetype)init {
+    self = [super init];
+
+    observer = [[FloraPreferenceObserver alloc] initWithKey:@"mode" withChangeHandler:^() {
+        [self reloadSpecifiers];
+    }];
+
+    return self;
+}
 
 - (NSArray *)specifiers {
 	if (!_specifiers) {
-        _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
+        NSUserDefaults *preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+        NSMutableArray *baseSpecifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
+        NSString *value = [preferences objectForKey:@"mode"] ?: @"Simple";
+
+        _specifiers = [self getSpecifiersWithValue:value specifiers:baseSpecifiers];
 	}
 
 	return _specifiers;
@@ -16,6 +32,29 @@
     if ([[specifier propertyForKey:@"key"] isEqualToString:@"enabled"]) {
 		[self promptToRespring];
     }
+}
+
+- (NSMutableArray *)getSpecifiersWithValue:(NSString *)value specifiers:(NSArray *)specifiers {
+    NSMutableArray *specifiersToKeep = [NSMutableArray array];
+    
+    for (PSSpecifier *specifier in specifiers) {
+        if (![specifier propertyForKey:@"floraColorType"]) {
+            [specifiersToKeep addObject:specifier];
+            continue;
+        }
+
+        if ([[value lowercaseString] isEqualToString:@"simple"] && [[specifier propertyForKey:@"floraColorType"] isEqualToString:@"simple"]) {
+            [specifiersToKeep addObject:specifier];
+            continue;
+        }
+
+        if ([[value lowercaseString] isEqualToString:@"advanced"] && [[specifier propertyForKey:@"floraColorType"] isEqualToString:@"advanced"]) {
+            [specifiersToKeep addObject:specifier];
+            continue;
+        }
+    }
+
+    return specifiersToKeep;
 }
 
 - (void)respring {
@@ -57,7 +96,7 @@
 	[self presentViewController:doneAlert animated:YES completion:nil];
 }
 
-void enumerateProcessesUsingBlock(void (^enumerator)(pid_t pid, NSString *executablePath, BOOL *stop)) {
+- (void)enumerateProcessesUsingBlock:(void (^)(pid_t pid, NSString *executablePath, BOOL *stop))enumerator {
     static int maxArgumentSize = 0;
 
     if (maxArgumentSize == 0) {
@@ -118,11 +157,11 @@ void enumerateProcessesUsingBlock(void (^enumerator)(pid_t pid, NSString *execut
 }
 
 - (void)killProcess:(NSString *)processName {
-    enumerateProcessesUsingBlock(^(pid_t pid, NSString* executablePath, BOOL* stop) {
+    [self enumerateProcessesUsingBlock:^(pid_t pid, NSString* executablePath, BOOL* stop) {
         if([executablePath.lastPathComponent isEqualToString:processName]) {
             kill(pid, SIGTERM);
         }
-    });
+    }];
 }
 
 - (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler {

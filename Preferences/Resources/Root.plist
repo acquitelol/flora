@@ -6,9 +6,17 @@
 	<array>
         <dict>
 			<key>cell</key>
+			<string>PSGroupCell</string>
+            <key>footerText</key>
+			<string>The mode selector above allows you to pick between different functionalities: Simple (two colors theme everything) or Advanced (you can theme every color manually).</string>
+            <key>isStaticText</key>
+			<true />
+		</dict>
+        <dict>
+			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<true />
+			<false/>
 			<key>defaults</key>
 			<string>com.rosiepie.flora</string>
 			<key>key</key>
@@ -21,12 +29,103 @@
                 <string>camera.macro</string>
             </dict>
 		</dict>
+        <dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+            <key>cellClass</key>
+            <string>FloraPopoverCell</string>
+			<key>default</key>
+			<string>Simple</string>
+			<key>defaults</key>
+			<string>com.rosiepie.flora</string>
+			<key>key</key>
+			<string>mode</string>
+            <key>options</key>
+            <array>
+                <dict>
+                    <key>name</key>
+                    <string>Simple</string>
+                    <key>icon</key>
+                    <string>paintpalette.fill</string>
+                </dict>
+                <dict>
+                    <key>name</key>
+                    <string>Advanced</string>
+                    <key>icon</key>
+                    <string>paintpalette</string>
+                </dict>
+            </array>
+			<key>label</key>
+			<string>Mode</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>square.fill.text.grid.1x2</string>
+            </dict>
+		</dict>
 
         <dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Colors</string>
+			<string>Simple Colors</string>
+            <key>floraColorType</key>
+	        <string>simple</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>cellClass</key>
+            <string>GcColorPickerCell</string>
+            <key>label</key>
+            <string>Primary</string>
+            <key>style</key>
+            <integer>1</integer>
+            <key>fallback</key>
+            <string>ff91e9</string>
+            <key>key</key>
+            <string>primaryColor</string>
+            <key>defaults</key>
+            <string>com.rosiepie.flora</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>sparkles.rectangle.stack.fill</string>
+            </dict>
+            <key>floraColorType</key>
+	        <string>simple</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSLinkCell</string>
+            <key>cellClass</key>
+            <string>GcColorPickerCell</string>
+            <key>label</key>
+            <string>Secondary</string>
+            <key>style</key>
+            <integer>1</integer>
+            <key>fallback</key>
+            <string>d391ff</string>
+            <key>key</key>
+            <string>secondaryColor</string>
+            <key>defaults</key>
+            <string>com.rosiepie.flora</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>sparkles.rectangle.stack</string>
+            </dict>
+            <key>floraColorType</key>
+	        <string>simple</string>
+        </dict>
+
+        <dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Advanced Colors</string>
+            <key>floraColorType</key>
+	        <string>advanced</string>
 		</dict>
         <dict>
             <key>cell</key>
@@ -37,6 +136,8 @@
             <string>Base Colors</string>
             <key>isController</key>
 	        <true/>
+            <key>floraColorType</key>
+	        <string>advanced</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -52,6 +153,8 @@
             <string>System Colors</string>
             <key>isController</key>
             <true/>
+            <key>floraColorType</key>
+	        <string>advanced</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -67,25 +170,12 @@
             <string>Dynamic Colors</string>
             <key>isController</key>
 	        <true/>
+            <key>floraColorType</key>
+	        <string>advanced</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
                 <string>arrow.up.and.down.and.sparkles</string>
-            </dict>
-        </dict>
-        <dict>
-            <key>cell</key>
-            <string>PSLinkCell</string>
-            <key>detail</key>
-            <string>FloraExternalColorListController</string>
-            <key>label</key>
-            <string>External Colors</string>
-            <key>isController</key>
-	        <true/>
-            <key>iconImageSystem</key>
-            <dict>
-                <key>name</key>
-                <string>paperplane.fill</string>
             </dict>
         </dict>
         <dict>
@@ -97,6 +187,8 @@
             <string>Table Colors</string>
             <key>isController</key>
 	        <true/>
+            <key>floraColorType</key>
+	        <string>advanced</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -112,6 +204,8 @@
             <string>Other Colors</string>
             <key>isController</key>
 	        <true/>
+            <key>floraColorType</key>
+	        <string>advanced</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>

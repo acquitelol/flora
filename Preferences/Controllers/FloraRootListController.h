@@ -7,6 +7,7 @@
 #import <objc/runtime.h>
 #import <sys/sysctl.h>
 #import "../../Tweak/Utilities.h"
+#import "../Observers/FloraPreferenceObserver.h"
 
 @interface HBListController : PSListController
 @end
