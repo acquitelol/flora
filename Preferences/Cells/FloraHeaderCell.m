@@ -74,7 +74,13 @@
 - (void)handleToggle {
     [preferences setObject:@(((UISwitch *)(self.control)).on) forKey:@"enabled"];
     [preferences synchronize];
-    [Utilities respring];
+
+    UIViewController *controller = [self _viewControllerForAncestor];
+    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
+        [Utilities respring];
+    }];
+
+	[controller presentViewController:respringAlert animated:YES completion:nil];
 }
 
 - (void)layoutSubviews {
