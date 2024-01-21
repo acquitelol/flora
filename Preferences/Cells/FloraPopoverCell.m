@@ -12,22 +12,52 @@
 
     if (self) {
         preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+        selected = [preferences objectForKey:specifier.properties[@"key"]] ?: specifier.properties[@"default"];
         options = specifier.properties[@"options"];
+
+        UIMenu *menu = [self createMenu];
+
+        UIButton *accessoryButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        accessoryButton.frame = CGRectMake(0, 0, 20, 16);
+        accessoryButton.adjustsImageWhenHighlighted = NO;
+        accessoryButton.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
+        accessoryButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
+        accessoryButton.menu = menu;
+        accessoryButton.showsMenuAsPrimaryAction = true;
+
+        [accessoryButton setImage:[[UIImage systemImageNamed:@"arrow.up.and.down.and.sparkles"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] 
+                       forState:UIControlStateNormal];
+
+        UIView *accessoryContainerView = [[UIView alloc] initWithFrame:accessoryButton.frame];
+        [accessoryContainerView addSubview:accessoryButton];
+
+        [self setAccessoryView:accessoryContainerView];
+
+        UIButton *menuResponderButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        menuResponderButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.contentView insertSubview:menuResponderButton belowSubview:self.accessoryView];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [menuResponderButton.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+            [menuResponderButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
+            [menuResponderButton.topAnchor constraintEqualToAnchor:self.topAnchor],
+            [menuResponderButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+        ]];
+
+        menuResponderButton.menu = menu;
+        menuResponderButton.showsMenuAsPrimaryAction = true;
 
         selectedItemButton = [UIButton buttonWithType:UIButtonTypeSystem];
         selectedItemButton.translatesAutoresizingMaskIntoConstraints = NO;
+        selectedItemButton.userInteractionEnabled = NO;
+        selectedItemButton.titleLabel.font = [UIFont systemFontOfSize:17.0];
         [selectedItemButton addTarget:self action:@selector(createMenu) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:selectedItemButton];
 
         [NSLayoutConstraint activateConstraints:@[
-            [selectedItemButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16.0],
+            [selectedItemButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor],
             [selectedItemButton.centerYAnchor constraintEqualToAnchor:self.contentView.centerYAnchor],
         ]];
-
-        selectedItemButton.menu = [self createMenu];
-        selectedItemButton.showsMenuAsPrimaryAction = true;
-
-        selected = [preferences objectForKey:specifier.properties[@"key"]] ?: specifier.properties[@"default"];
     }
 
     return self;
@@ -39,14 +69,6 @@
 
 - (id)cellTarget {
     return self;
-}
-
-- (SEL)action {
-        return @selector(openMenu);
-}
-
-- (SEL)cellAction {
-    return @selector(openMenu);
 }
 
 - (UIMenu *)createMenu {
@@ -73,15 +95,14 @@
     [selectedItemButton setTitle:selected forState:UIControlStateNormal];
 }
 
-- (void)openMenu {
-    [selectedItemButton sendActionsForControlEvents:UIControlEventTouchUpInside];
-}
-
 - (void)didMoveToSuperview {
     [super didMoveToSuperview];
     [self updatePreview];
     [self.specifier setTarget:self];
-    [self.specifier setButtonAction:@selector(openMenu)];
+
+    // Needed to make the underlying PSLinkCell not open
+    // when user taps tiny part which does not open the menu.
+    [self.specifier setButtonAction:@selector(nothing)];
 }
 
 @end

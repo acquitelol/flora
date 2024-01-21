@@ -6,28 +6,30 @@
 	<array>
         <dict>
 			<key>cell</key>
-			<string>PSGroupCell</string>
-            <key>footerText</key>
-			<string>The mode selector above allows you to pick between different functionalities: Simple (two colors theme everything) or Advanced (you can theme every color manually).</string>
-            <key>isStaticText</key>
-			<true />
-		</dict>
-        <dict>
-			<key>cell</key>
 			<string>PSSwitchCell</string>
+            <key>cellClass</key>
+            <string>FloraHeaderCell</string>
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
 			<string>com.rosiepie.flora</string>
 			<key>key</key>
 			<string>enabled</string>
-			<key>label</key>
-			<string>Enable Flora</string>
-            <key>iconImageSystem</key>
-            <dict>
-                <key>name</key>
-                <string>camera.macro</string>
-            </dict>
+            <key>title</key>
+            <string>Flora</string>
+            <key>description</key>
+            <string>Created with &lt;3 by Rosie</string>
+            <key>height</key>
+            <real>205</real>
+		</dict>
+
+        <dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+            <key>footerText</key>
+			<string>The mode selector above allows you to pick between different functionalities: Simple (two colors theme everything) or Advanced (you can theme every color manually).</string>
+            <key>isStaticText</key>
+			<true />
 		</dict>
         <dict>
 			<key>cell</key>
@@ -56,7 +58,7 @@
                 </dict>
             </array>
 			<key>label</key>
-			<string>Mode</string>
+			<string>Functionality</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -251,10 +253,6 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Source</string>
-            <key>footerText</key>
-			<string>Created with &lt;3 by Rosie</string>
-            <key>isStaticText</key>
-			<true />
 		</dict>
         <dict>
             <key>cell</key>

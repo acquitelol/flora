@@ -3,9 +3,8 @@ FloraPreferences_FILES = $(wildcard Controllers/*.m ../Tweak/Utilities.m Colors/
 FloraPreferences_FRAMEWORKS = UIKit
 FloraPreferences_PRIVATE_FRAMEWORKS = Preferences
 FloraPreferences_INSTALL_PATH = /Library/PreferenceBundles
-FloraPreferences_CFLAGS = -fobjc-arc
+FloraPreferences_CFLAGS = -fobjc-arc -DPACKAGE_VERSION='@"$(THEOS_PACKAGE_BASE_VERSION)"' -DPACKAGE_DESCRIPTION='@"$(THEOS_PACKAGE_BASE_DESCRIPTION)"'
 FloraPreferences_LIBRARIES = gcuniversal
-FloraPreferences_EXTRA_FRAMEWORKS += Cephei, CepheiPrefs
 
 include $(THEOS)/makefiles/common.mk
 include $(THEOS_MAKE_PATH)/bundle.mk

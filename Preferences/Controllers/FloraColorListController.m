@@ -2,6 +2,16 @@
 
 @implementation FloraColorListController
 
+- (instancetype)init {
+    self = [super init];
+
+    if (self) {
+		[self initRespringButton];
+    }
+
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -45,9 +55,29 @@
     [self setLastSearchBarTextLength:[text length]];
 }
 
--(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     [self reloadSpecifiers];
     [self setLastSearchBarTextLength:0];
+}
+
+- (void)initRespringButton {
+	UIButton *respringButton = [UIButton buttonWithType:UIButtonTypeCustom];
+	respringButton.frame = CGRectMake(0,0,26,26);
+	[respringButton setImage:[[UIImage systemImageNamed:@"slowmo"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+	respringButton.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
+	respringButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
+    [respringButton addTarget:self action:@selector(promptToRespring) forControlEvents:UIControlEventTouchUpInside];
+
+	UIBarButtonItem *respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
+	self.navigationItem.rightBarButtonItem = respringButtonItem;
+}
+
+- (void)promptToRespring {
+    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
+        [Utilities respring];
+    }];
+
+	[self presentViewController:respringAlert animated:YES completion:nil];
 }
 
 - (PSSpecifier *)generateSpecifierWithName:(NSString *)name parsedName:(NSString *)parsedName hexColor:(NSString *)hexColor {
@@ -59,12 +89,16 @@
                                                                cell:PSLinkCell
                                                                edit:nil];
 
+    UIImage *originalImage = [UIImage systemImageNamed:@"paintpalette.fill"];
+    UIImageSymbolConfiguration *symbolConfiguration = [UIImageSymbolConfiguration configurationWithScale:UIImageSymbolScaleSmall];
+    UIImage *paletteImage = [originalImage imageByApplyingSymbolConfiguration:symbolConfiguration];
+
     [specifier setProperty:[GcColorPickerCell class] forKey:@"cellClass"];
     [specifier setProperty:hexColor forKey:@"fallback"];
     [specifier setProperty:@1 forKey:@"style"];
     [specifier setProperty:parsedName forKey:@"label"];
     [specifier setProperty:BUNDLE_ID forKey:@"defaults"];
-    [specifier setProperty:[UIImage systemImageNamed:@"paintpalette.fill"] forKey:@"iconImageSystem"];
+    [specifier setProperty:paletteImage forKey:@"iconImage"];
     [specifier setProperty:name forKey:@"key"];
 
     return specifier;
