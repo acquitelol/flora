@@ -1,6 +1,7 @@
 #import "FloraHeaderCell.h"
 
 @implementation FloraHeaderCell {
+    UIImageView *imageView;
     NSUserDefaults *preferences;
 }
 
@@ -19,7 +20,7 @@
 
         [NSLayoutConstraint activateConstraints:@[
             [title.widthAnchor constraintEqualToAnchor:self.contentView.widthAnchor],
-            [title.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-80.0],
+            [title.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-75.0],
             [title.centerXAnchor constraintEqualToAnchor:self.contentView.centerXAnchor],
         ]];
 
@@ -33,12 +34,12 @@
 
         [NSLayoutConstraint activateConstraints:@[
             [description.widthAnchor constraintEqualToAnchor:self.contentView.widthAnchor],
-            [description.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-60.0],
+            [description.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-55.0],
             [description.centerXAnchor constraintEqualToAnchor:self.contentView.centerXAnchor],
         ]];
 
-        UIImage *image = [UIImage imageNamed:@"Icon@2x.png" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+        UIImage *image = [UIImage imageNamed:@"FullIcon.png" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+        imageView = [[UIImageView alloc] initWithImage:image];
         imageView.layer.masksToBounds = true;
         imageView.layer.cornerRadius = 10.0f;
         imageView.translatesAutoresizingMaskIntoConstraints = false;
@@ -61,7 +62,7 @@
         [self.contentView addSubview:toggle];
 
         [NSLayoutConstraint activateConstraints:@[
-            [toggle.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-10.0],
+            [toggle.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-5.0],
             [toggle.centerXAnchor constraintEqualToAnchor:self.contentView.centerXAnchor],
         ]];
 
@@ -74,6 +75,10 @@
 - (void)handleToggle {
     [preferences setObject:@(((UISwitch *)(self.control)).on) forKey:@"enabled"];
     [preferences synchronize];
+
+    BOOL enabled = [[preferences objectForKey:@"enabled"] boolValue];
+    UIImage *updatedImage = [UIImage imageNamed:(enabled ? @"FullIcon.png" : @"FullIconNoCC.png") inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+    [imageView setImage:updatedImage];
 
     UIViewController *controller = [self _viewControllerForAncestor];
     UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{

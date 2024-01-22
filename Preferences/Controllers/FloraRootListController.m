@@ -21,6 +21,11 @@
         NSString *value = [preferences objectForKey:@"mode"] ?: @"Simple";
 
         for (PSSpecifier *specifier in baseSpecifiers) {
+            if ([[specifier propertyForKey:@"id"] isEqualToString:@"credits"]) {
+                [specifier setProperty:[NSString stringWithFormat:@"© Rosie (acquitelol) 2024 • %@/%@", BUNDLE_ID, PACKAGE_SCHEME] forKey:@"footerText"];
+                [specifier setProperty:@YES forKey:@"isStaticText"];
+            }
+
             NSDictionary *iconImageSystem = [specifier propertyForKey:@"iconImageSystem"];
 
             if (!iconImageSystem || ![iconImageSystem objectForKey:@"name"]) continue;

@@ -252,7 +252,9 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Source</string>
+			<string>Credits</string>
+            <key>id</key>
+            <string>credits</string>
 		</dict>
         <dict>
             <key>cell</key>
