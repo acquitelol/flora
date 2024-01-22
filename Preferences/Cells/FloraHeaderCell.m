@@ -77,8 +77,17 @@
     [preferences synchronize];
 
     BOOL enabled = [[preferences objectForKey:@"enabled"] boolValue];
-    UIImage *updatedImage = [UIImage imageNamed:(enabled ? @"FullIcon.png" : @"FullIconNoCC.png") inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
-    [imageView setImage:updatedImage];
+    NSString *imageName = (enabled ? @"FullIcon.png" : @"FullIconNoCC.png");
+
+    [UIView transitionWithView:imageView
+                  duration:0.5
+                   options:UIViewAnimationOptionTransitionCrossDissolve
+                animations:^{
+                    [imageView setImage:[UIImage imageNamed:imageName
+                                                  inBundle:[NSBundle bundleForClass:self.class]
+                             compatibleWithTraitCollection:nil]];
+                }
+                completion:nil];
 
     UIViewController *controller = [self _viewControllerForAncestor];
     UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
