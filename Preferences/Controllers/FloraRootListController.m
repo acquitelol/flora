@@ -1,22 +1,63 @@
 #include "FloraRootListController.h"
 
 @implementation FloraRootListController {
-    FloraPreferenceObserver *observer;
+    FloraPreferenceObserver *modeObserver;
+    FloraPreferenceObserver *enableObserver;
+    NSUserDefaults *preferences;
+    UIButton *respringButton;
 }
 
 - (instancetype)init {
     self = [super init];
 
-    observer = [[FloraPreferenceObserver alloc] initWithKey:@"mode" withChangeHandler:^() {
+    preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+    BOOL staticEnabled = [[preferences objectForKey:@"staticEnabled"] boolValue];
+    [self initRespringButton:staticEnabled];
+
+    modeObserver = [[FloraPreferenceObserver alloc] initWithKey:@"mode" withChangeHandler:^() {
         [self reloadSpecifiers];
+    }];
+
+    enableObserver = [[FloraPreferenceObserver alloc] initWithKey:@"enabled" withChangeHandler:^() {
+        BOOL currentEnabled = [[preferences objectForKey:@"enabled"] boolValue];
+
+        [UIView animateWithDuration:0.3 
+                        animations:^{
+                            respringButton.alpha = staticEnabled == currentEnabled ? 0.0 : 1.0;
+                        } 
+                        completion:nil];
     }];
 
     return self;
 }
 
+- (void)initRespringButton:(BOOL)enabled {
+    respringButton = [UIButton buttonWithType:UIButtonTypeSystem];
+
+    UIImageSymbolConfiguration *symbolConfig = [UIImageSymbolConfiguration configurationWithScale:UIImageSymbolScaleMedium];
+    UIImage *slowmoImage = [UIImage systemImageNamed:@"slowmo" withConfiguration:symbolConfig];
+    [respringButton setImage:slowmoImage forState:UIControlStateNormal];
+    [respringButton setTitle:@"Respring" forState:UIControlStateNormal];
+
+    respringButton.titleLabel.font = [UIFont systemFontOfSize:17.0];
+    respringButton.tintColor = [UIColor redColor];
+    respringButton.titleEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 0.0, 0.0);
+    respringButton.alpha = enabled == [[preferences objectForKey:@"enabled"] boolValue] ? 0.0 : 1.0;
+
+    [respringButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [respringButton addTarget:self action:@selector(promptToRespring) forControlEvents:UIControlEventTouchUpInside];
+    [respringButton sizeToFit];
+
+    CGRect buttonFrame = respringButton.frame;
+    buttonFrame.size.width = respringButton.intrinsicContentSize.width + 10.0;
+    respringButton.frame = buttonFrame;
+
+	UIBarButtonItem *respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
+	self.navigationItem.rightBarButtonItem = respringButtonItem;
+}
+
 - (NSArray *)specifiers {
 	if (!_specifiers) {
-        NSUserDefaults *preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
         NSMutableArray *baseSpecifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
         NSString *value = [preferences objectForKey:@"mode"] ?: @"Simple";
 
@@ -37,14 +78,6 @@
 	}
 
 	return _specifiers;
-}
-
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
-    [super setPreferenceValue:value specifier:specifier];
-
-    if ([[specifier propertyForKey:@"key"] isEqualToString:@"enabled"]) {
-		[self promptToRespring];
-    }
 }
 
 - (NSMutableArray *)getSpecifiersWithValue:(NSString *)value specifiers:(NSArray *)specifiers {

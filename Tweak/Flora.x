@@ -7,7 +7,9 @@ static void load_preferences() {
 %ctor {
     load_preferences();
 
-    BOOL isEnabled = [[preferences objectForKey:@"enabled"] boolValue];
+    id enabledObject = [preferences objectForKey:@"enabled"];
+    [preferences setObject:enabledObject forKey:@"staticEnabled"];
+    BOOL isEnabled = [[preferences objectForKey:@"staticEnabled"] boolValue];
 
     if (!isEnabled) {
         NSLog(@"[Flora] Tweak is disabled. Exiting...");

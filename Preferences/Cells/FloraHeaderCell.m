@@ -80,7 +80,7 @@
     NSString *imageName = (enabled ? @"FullIcon.png" : @"FullIconNoCC.png");
 
     [UIView transitionWithView:imageView
-                  duration:0.5
+                  duration:0.3
                    options:UIViewAnimationOptionTransitionCrossDissolve
                 animations:^{
                     [imageView setImage:[UIImage imageNamed:imageName
@@ -88,13 +88,6 @@
                              compatibleWithTraitCollection:nil]];
                 }
                 completion:nil];
-
-    UIViewController *controller = [self _viewControllerForAncestor];
-    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
-        [Utilities respring];
-    }];
-
-	[controller presentViewController:respringAlert animated:YES completion:nil];
 }
 
 - (void)layoutSubviews {
