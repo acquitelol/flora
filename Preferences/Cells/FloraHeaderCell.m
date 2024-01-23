@@ -38,7 +38,10 @@
             [description.centerXAnchor constraintEqualToAnchor:self.contentView.centerXAnchor],
         ]];
 
-        UIImage *image = [UIImage imageNamed:@"FullIcon.png" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+        BOOL enabled = [[preferences objectForKey:@"enabled"] boolValue];
+        NSString *imageName = (enabled ? @"FullIcon.png" : @"FullIconNoCC.png");
+
+        UIImage *image = [UIImage imageNamed:imageName inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
         imageView = [[UIImageView alloc] initWithImage:image];
         imageView.layer.masksToBounds = true;
         imageView.layer.cornerRadius = 10.0f;
@@ -51,8 +54,6 @@
             [imageView.bottomAnchor constraintEqualToAnchor:title.topAnchor constant:-10.0],
             [imageView.centerXAnchor constraintEqualToAnchor:self.contentView.centerXAnchor],
         ]];
-
-        BOOL enabled = [[preferences objectForKey:@"enabled"] boolValue];
 
         UISwitch *toggle = [[UISwitch alloc] initWithFrame:CGRectZero];
         toggle.transform = CGAffineTransformMakeScale(1.3, 1.3);
