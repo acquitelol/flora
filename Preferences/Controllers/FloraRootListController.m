@@ -2,6 +2,8 @@
 
 @implementation FloraRootListController {
     FloraPreferenceObserver *modeObserver;
+    FloraPreferenceObserver *primaryColorObserver;
+    FloraPreferenceObserver *secondaryColorObserver;
     FloraPreferenceObserver *enableObserver;
     NSUserDefaults *preferences;
     UIButton *respringButton;
@@ -15,6 +17,14 @@
     [self initRespringButton:staticEnabled];
 
     modeObserver = [[FloraPreferenceObserver alloc] initWithKey:@"mode" withChangeHandler:^() {
+        [self reloadSpecifiers];
+    }];
+
+    primaryColorObserver = [[FloraPreferenceObserver alloc] initWithKey:@"floraPrimaryColor" withChangeHandler:^() {
+        [self reloadSpecifiers];
+    }];
+
+    secondaryColorObserver = [[FloraPreferenceObserver alloc] initWithKey:@"floraSecondaryColor" withChangeHandler:^() {
         [self reloadSpecifiers];
     }];
 

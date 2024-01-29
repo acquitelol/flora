@@ -84,9 +84,9 @@
             <key>style</key>
             <integer>1</integer>
             <key>fallback</key>
-            <string>ff91e9</string>
+            <string>e8a7bf</string>
             <key>key</key>
-            <string>primaryColor</string>
+            <string>floraPrimaryColor</string>
             <key>defaults</key>
             <string>com.rosiepie.flora</string>
             <key>iconImageSystem</key>
@@ -107,9 +107,9 @@
             <key>style</key>
             <integer>1</integer>
             <key>fallback</key>
-            <string>d391ff</string>
+            <string>d795f8</string>
             <key>key</key>
-            <string>secondaryColor</string>
+            <string>floraSecondaryColor</string>
             <key>defaults</key>
             <string>com.rosiepie.flora</string>
             <key>iconImageSystem</key>

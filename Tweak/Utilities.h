@@ -10,8 +10,10 @@
 #import "Constants.h"
 
 @interface Utilities : NSObject
-+ (void)loopUIColorWithBlock:(void (^)(SEL selector, NSString *name, Method method, Class uiColorClass))block;
++ (void)loopUIColorWithBlock:(void (^)(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass))block;
 + (NSString *)hexStringFromColor:(UIColor *)color;
++ (NSDictionary *)convertToHSVColor:(UIColor *)color;
++ (double)averageWithSplit:(double)split firstValue:(id)firstValue secondValue:(id)secondValue;
 + (void)respring;
 + (void)enumerateProcessesUsingBlock:(void (^)(pid_t pid, NSString *executablePath, BOOL *stop))enumerator;
 + (void)killProcess:(NSString *)processName;

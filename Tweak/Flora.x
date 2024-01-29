@@ -16,7 +16,7 @@ static void load_preferences() {
         return;
     }
 
-    [Utilities loopUIColorWithBlock:^(SEL selector, NSString *name, Method method, Class uiColorClass) {
+    [Utilities loopUIColorWithBlock:^(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass) {
        __block UIColor *(*originalColorWithCGColor)(id self, SEL _cmd);
 
         MSHookMessageEx(
@@ -25,7 +25,20 @@ static void load_preferences() {
             imp_implementationWithBlock(^(id self, SEL _cmd) {
                 UIColor *originalColor = originalColorWithCGColor(self, _cmd);
                 NSString *originalColorHex = [Utilities hexStringFromColor:originalColor];
-                
+
+                if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {
+                    NSString *key = [NSString stringWithFormat:@"flora%@Color", index % 2 == 0 ? @"Primary" : @"Secondary"];
+                    UIColor *colorAtKey = [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:key fallback:(index % 2 == 0 ? @"e8a7bf" : @"d795f8")];
+
+                    NSDictionary *original = [Utilities convertToHSVColor:originalColor];
+                    NSDictionary *custom = [Utilities convertToHSVColor:colorAtKey];
+
+                    return [UIColor colorWithHue:[[custom objectForKey:@"hue"] doubleValue]
+                                      saturation:[Utilities averageWithSplit:0.40 firstValue:[original objectForKey:@"saturation"] secondValue:[custom objectForKey:@"saturation"]]
+                                      brightness:[Utilities averageWithSplit:0.20 firstValue:[original objectForKey:@"brightness"] secondValue:[custom objectForKey:@"brightness"]]
+                                           alpha:[[original objectForKey:@"alpha"] doubleValue]];
+                }
+
                 return [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:name fallback:originalColorHex];
             }),
             (IMP *)&originalColorWithCGColor

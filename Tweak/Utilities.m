@@ -15,7 +15,7 @@ static int compareMethods(const void *method1, const void *method2) {
 
 @implementation Utilities
 
-+ (void)loopUIColorWithBlock:(void (^)(SEL selector, NSString *name, Method method, Class uiColorClass))block {
++ (void)loopUIColorWithBlock:(void (^)(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass))block {
     unsigned methodCount = 0;
     Class uiColorClass = object_getClass(NSClassFromString(@"UIColor"));
     Method *methods = class_copyMethodList(uiColorClass, &methodCount);
@@ -41,7 +41,7 @@ static int compareMethods(const void *method1, const void *method2) {
             continue;
         };
 
-        block(selector, name, method, uiColorClass);
+        block(i, selector, name, method, uiColorClass);
         free((void *)returnType);
     }
 
@@ -57,6 +57,22 @@ static int compareMethods(const void *method1, const void *method2) {
     int blueInt = (int)(blue * 255.0);
 
     return [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
+}
+
++ (NSDictionary *)convertToHSVColor:(UIColor *)color {
+    CGFloat hue, saturation, brightness, alpha;
+    [color getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+
+    return @{
+        @"hue": @(hue),
+        @"saturation": @(saturation),
+        @"brightness": @(brightness),
+        @"alpha": @(alpha)
+    };
+}
+
++ (double)averageWithSplit:(double)split firstValue:(id)firstValue secondValue:(id)secondValue {
+    return ([firstValue doubleValue] * (1 - split)) + ([secondValue doubleValue] * (split));
 }
 
 + (void)respring {
@@ -76,7 +92,7 @@ static int compareMethods(const void *method1, const void *method2) {
         }
     }
 
-    int mib[3] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL};
+    int mib[3] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL };
     struct kinfo_proc *info;
     size_t length;
     int count;

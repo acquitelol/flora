@@ -120,10 +120,10 @@
 - (NSMutableArray *)getColorSpecifiersWithFilter:(BOOL (^)(NSString *name))filter parser:(NSString *(^)(NSString *name))parser {
     NSMutableArray *specifiers = [NSMutableArray array];
 
-    [Utilities loopUIColorWithBlock:^(SEL selector, NSString *name, Method method, Class uiColorClass) {
+    [Utilities loopUIColorWithBlock:^(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass) {
         if (filter && !filter(name)) return;
-
-        id colorInstance = [UIColor performSelector:selector];
+        
+        UIColor *colorInstance = [UIColor performSelector:selector];
         NSString *hexColor = [Utilities hexStringFromColor:colorInstance];
         NSString *parsedName = [self parseName:parser(name)];
 
