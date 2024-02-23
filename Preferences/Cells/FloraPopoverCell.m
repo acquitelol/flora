@@ -4,6 +4,7 @@
     UIButton *selectedItemButton;
     NSUserDefaults *preferences;
     NSArray *options;
+    NSString *title;
     NSString *selected;
 }
 
@@ -14,6 +15,7 @@
         preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
         selected = [preferences objectForKey:specifier.properties[@"key"]] ?: specifier.properties[@"default"];
         options = specifier.properties[@"options"];
+        title = specifier.properties[@"title"];
 
         UIMenu *menu = [self createMenu];
 
@@ -87,7 +89,7 @@
         [items addObject:action];
     }
 
-    UIMenu *menu = [UIMenu menuWithTitle:@"" children:items];
+    UIMenu *menu = [UIMenu menuWithTitle:title children:items];
     return menu;
 }
 

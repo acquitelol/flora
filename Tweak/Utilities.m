@@ -20,6 +20,7 @@ static int compareMethods(const void *method1, const void *method2) {
     Class uiColorClass = object_getClass(NSClassFromString(@"UIColor"));
     Method *methods = class_copyMethodList(uiColorClass, &methodCount);
 
+    // Sort the colors alphabetically
     qsort(methods, methodCount, sizeof(Method), compareMethods);
 
     for (unsigned int i = 0; i < methodCount; i++) {
@@ -76,76 +77,10 @@ static int compareMethods(const void *method1, const void *method2) {
 }
 
 + (void)respring {
-    [self killProcess:@"SpringBoard"];
-    exit(0);
-}
-
-+ (void)enumerateProcessesUsingBlock:(void (^)(pid_t pid, NSString *executablePath, BOOL *stop))enumerator {
-    static int maxArgumentSize = 0;
-
-    if (maxArgumentSize == 0) {
-        size_t size = sizeof(maxArgumentSize);
-
-        if (sysctl((int[]){ CTL_KERN, KERN_ARGMAX }, 2, &maxArgumentSize, &size, NULL, 0) == -1) {
-            perror("sysctl argument size");
-            maxArgumentSize = 4096;
-        }
-    }
-
-    int mib[3] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL };
-    struct kinfo_proc *info;
-    size_t length;
-    int count;
-    
-    if (sysctl(mib, 3, NULL, &length, NULL, 0) < 0)
-        return;
-
-    if (!(info = malloc(length)))
-        return;
-
-    if (sysctl(mib, 3, info, &length, NULL, 0) < 0) {
-        free(info);
-        return;
-    }
-
-    count = length / sizeof(struct kinfo_proc);
-
-    for (int i = 0; i < count; i++) {
-        @autoreleasepool {
-            pid_t pid = info[i].kp_proc.p_pid;
-
-            if (pid == 0) {
-                continue;
-            }
-
-            size_t size = maxArgumentSize;
-            char* buffer = (char *)malloc(length);
-
-            if (sysctl((int[]){ CTL_KERN, KERN_PROCARGS2, pid }, 3, buffer, &size, NULL, 0) == 0) {
-                NSString* executablePath = [NSString stringWithCString:(buffer+sizeof(int)) encoding:NSUTF8StringEncoding];
-                
-                BOOL stop = NO;
-                enumerator(pid, executablePath, &stop);
-
-                if(stop) {
-                    free(buffer);
-                    break;
-                }
-            }
-
-            free(buffer);
-        }
-    }
-
-    free(info);
-}
-
-+ (void)killProcess:(NSString *)processName {
-    [self enumerateProcessesUsingBlock:^(pid_t pid, NSString* executablePath, BOOL* stop) {
-        if([executablePath.lastPathComponent isEqualToString:processName]) {
-            kill(pid, SIGTERM);
-        }
-    }];
+    // Launch straight into the tweak's preferences page when respringing
+    NSURL *relaunchURL = [NSURL URLWithString:@"prefs:root=Flora"];
+    SBSRelaunchAction *restartAction = [SBSRelaunchAction actionWithReason:@"RestartRenderServer" options:SBSRelaunchActionOptionsFadeToBlackTransition targetURL:relaunchURL];
+    [[FBSSystemService sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
 }
 
 + (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler {
@@ -165,6 +100,89 @@ static int compareMethods(const void *method1, const void *method2) {
 	[alert addAction:stopAction];
 
     return alert;
+}
+
++ (UIAlertController *)alertWithDescription:(NSString *)description {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
+                                                                        message:description
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+
+	UIAlertAction *action = [UIAlertAction actionWithTitle:@"Okay" style:UIAlertActionStyleCancel handler:nil];
+
+	[alert addAction:action];
+    return alert;
+}
+
++ (NSData *)compressData:(NSData *)uncompressedData {
+    if ([uncompressedData length] == 0) {
+        return uncompressedData;
+    }
+
+    z_stream stream;
+    stream.zalloc = Z_NULL;
+    stream.zfree = Z_NULL;
+    stream.opaque = Z_NULL;
+    stream.total_out = 0;
+    stream.next_in = (Bytef *)[uncompressedData bytes];
+    stream.avail_in = (uInt)[uncompressedData length];
+
+    if (deflateInit2(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, (15+16), 8, Z_DEFAULT_STRATEGY) != Z_OK) {
+        return nil;
+    }
+
+    NSMutableData *compressedData = [NSMutableData dataWithLength:16384];
+
+    do {
+        if (stream.total_out >= [compressedData length]) {
+            [compressedData increaseLengthBy:16384];
+        }
+
+        stream.next_out = [compressedData mutableBytes] + stream.total_out;
+        stream.avail_out = (uInt)([compressedData length] - stream.total_out);
+
+        deflate(&stream, Z_FINISH);
+    } while (stream.avail_out == 0);
+
+    deflateEnd(&stream);
+    [compressedData setLength:stream.total_out];
+
+    return compressedData;
+}
+
++ (NSData *)decompressData:(NSData *)compressedData {
+    if ([compressedData length] == 0) {
+        return compressedData;
+    }
+
+    z_stream stream;
+    stream.zalloc = Z_NULL;
+    stream.zfree = Z_NULL;
+    stream.opaque = Z_NULL;
+    stream.total_out = 0;
+    stream.next_in = (Bytef *)[compressedData bytes];
+    stream.avail_in = (uInt)[compressedData length];
+
+    if (inflateInit2(&stream, (15 + 32)) != Z_OK) {
+        return nil;
+    }
+
+    NSMutableData *decompressedData = [NSMutableData dataWithLength:(NSUInteger)([compressedData length] * 1.5)];
+
+    do {
+        if (stream.total_out >= [decompressedData length]) {
+            [decompressedData increaseLengthBy:(NSUInteger)([compressedData length] * 0.5)];
+        }
+
+        stream.next_out = [decompressedData mutableBytes] + stream.total_out;
+        stream.avail_out = (uInt)([decompressedData length] - stream.total_out);
+
+        inflate(&stream, Z_FINISH);
+    } while (stream.avail_out == 0);
+
+    inflateEnd(&stream);
+    [decompressedData setLength:stream.total_out];
+
+    return decompressedData;
 }
 
 @end

@@ -45,13 +45,13 @@
     respringButton = [UIButton buttonWithType:UIButtonTypeSystem];
 
     UIImageSymbolConfiguration *symbolConfig = [UIImageSymbolConfiguration configurationWithScale:UIImageSymbolScaleMedium];
-    UIImage *slowmoImage = [UIImage systemImageNamed:@"slowmo" withConfiguration:symbolConfig];
-    [respringButton setImage:slowmoImage forState:UIControlStateNormal];
+    UIImage *respringImage = [UIImage systemImageNamed:@"arrow.counterclockwise" withConfiguration:symbolConfig];
+    [respringButton setImage:respringImage forState:UIControlStateNormal];
     [respringButton setTitle:@"Respring" forState:UIControlStateNormal];
 
     respringButton.titleLabel.font = [UIFont systemFontOfSize:17.0];
     respringButton.tintColor = [UIColor redColor];
-    respringButton.titleEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 0.0, 0.0);
+    respringButton.titleEdgeInsets = UIEdgeInsetsMake(0.0, 10.0, 0.0, 0.0);
     respringButton.alpha = enabled == [[preferences objectForKey:@"enabled"] boolValue] ? 0.0 : 1.0;
 
     [respringButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
@@ -77,6 +77,7 @@
                 [specifier setProperty:@YES forKey:@"isStaticText"];
             }
 
+            // Parse icon images as SF Symbols, similar to how Cephei does it but a slightly lighter implementation
             NSDictionary *iconImageSystem = [specifier propertyForKey:@"iconImageSystem"];
 
             if (!iconImageSystem || ![iconImageSystem objectForKey:@"name"]) continue;
@@ -92,8 +93,9 @@
 
 - (NSMutableArray *)getSpecifiersWithValue:(NSString *)value specifiers:(NSArray *)specifiers {
     NSMutableArray *specifiersToKeep = [NSMutableArray array];
-    
+
     for (PSSpecifier *specifier in specifiers) {
+        // If the specifier doesn't have a floraColorType then assume it isn't dynamic and *always* load it
         if (![specifier propertyForKey:@"floraColorType"]) {
             [specifiersToKeep addObject:specifier];
             continue;
@@ -122,7 +124,7 @@
 }
 
 - (void)promptToReset {
-    UIAlertController *resetAlert = [Utilities alertWithDescription:@"Are you sure you want to reset your preferences?" handler:^{
+    UIAlertController *resetAlert = [Utilities alertWithDescription:@"Are you sure you want to clear your preferences?" handler:^{
         [self resetPreferences];
     }];
 
@@ -131,20 +133,98 @@
 
 - (void)resetPreferences {
 	NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+
 	for (NSString *key in [userDefaults dictionaryRepresentation]) {
 		[userDefaults removeObjectForKey:key];
 	}
 
 	[self reloadSpecifiers];
 
-    UIAlertController *doneAlert = [UIAlertController alertControllerWithTitle:TWEAK_NAME 
-                                                                        message:@"Successfully cleared preferences." 
-                                                                        preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *failedAlert = [Utilities alertWithDescription:@"Successfully cleared preferences! (≧◡≦)"];
+    [self presentViewController:failedAlert animated:YES completion:nil];
+}
 
-    UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"Okay" style:UIAlertActionStyleCancel handler:nil];
+- (void)importColors {
+    UIAlertController *importAlert = [UIAlertController alertControllerWithTitle:@"Import colors"
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleAlert];
 
-	[doneAlert addAction:okayAction];
-	[self presentViewController:doneAlert animated:YES completion:nil];
+    [importAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = @"Please enter encoded color data...";
+    }];
+
+    UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UITextField *textField = importAlert.textFields.firstObject;
+        NSString *enteredText = textField.text;
+
+        // This data is a compressed base-64 string. It must be decompressed before it can be consumed.
+        NSError *error = nil;
+        NSData *compressedData = [[NSData alloc] initWithBase64EncodedString:enteredText options:0];
+        NSData *jsonData = [Utilities decompressData:compressedData];
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
+
+        if (!dictionary || error != nil) {
+            UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to import colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
+            [self presentViewController:failedAlert animated:YES completion:nil];
+        } else {
+            for (NSString *key in dictionary) {
+                id value = dictionary[key];
+
+                [preferences setObject:value forKey:key];
+            }
+
+            // We don't have to reload specifiers here because there are already observers
+            // which await for changes to the properties that matter like simple colors
+            UIAlertController *successAlert = [Utilities alertWithDescription:@"Successfully imported colors! (≧◡≦)\n\nWould you like to respring now?" handler:^{
+                [Utilities respring];
+            }];
+
+            [self presentViewController:successAlert animated:YES completion:nil];
+        }
+    }];
+
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [importAlert addAction:okayAction];
+    [importAlert addAction:cancelAction];
+
+    [self presentViewController:importAlert animated:YES completion:nil];
+}
+
+- (void)exportColors {
+    [preferences synchronize];
+
+    NSError *error;
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@THEOS_PACKAGE_INSTALL_PREFIX "/var/mobile/Library/Preferences/%@.plist", BUNDLE_ID]];
+    NSMutableDictionary *dictionary = [[NSDictionary dictionaryWithContentsOfURL:url error:&error] mutableCopy] ?: [NSMutableDictionary new];
+
+    if (!dictionary || error) {
+        UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to export colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
+        [self presentViewController:failedAlert animated:YES completion:nil];
+        return;
+    }
+
+    for (NSString *key in [dictionary allKeys]) {
+        // Remove all the keys which aren't colors
+        if (![key hasSuffix:@"Color"]) [dictionary removeObjectForKey:key];
+    }
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
+
+    if (!jsonData || error) {
+        UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to export colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
+        [self presentViewController:failedAlert animated:YES completion:nil];
+        return;
+    }
+
+    // Compress data using zlib before copying to clipboard
+    // This is done because the amount of text is very large when all of the advanced colors are themed
+    NSData *compressedData = [Utilities compressData:jsonData];
+    NSString *compressedString = [compressedData base64EncodedStringWithOptions:0];
+    [UIPasteboard generalPasteboard].string = compressedString;
+
+    UIAlertController *successAlert = [Utilities alertWithDescription:@"Exported colors to clipboard! (≧◡≦)"];
+    [self presentViewController:successAlert animated:YES completion:nil];
 }
 
 @end

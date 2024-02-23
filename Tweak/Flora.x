@@ -1,11 +1,11 @@
 #import "Flora.h"
 
-static void load_preferences() {
-    preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
-}
-
 %ctor {
-    load_preferences();
+    int result = libSandy_applyProfile("Flora_Preferences");
+
+    bool libSandyError = result == kLibSandyErrorXPCFailure;
+    NSString *suiteName = libSandyError ? BUNDLE_ID : FS_PREFERENCES(BUNDLE_ID);
+    NSUserDefaults *preferences = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
 
     id enabledObject = [preferences objectForKey:@"enabled"];
     [preferences setObject:enabledObject forKey:@"staticEnabled"];
@@ -28,18 +28,26 @@ static void load_preferences() {
 
                 if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {
                     NSString *key = [NSString stringWithFormat:@"flora%@Color", index % 2 == 0 ? @"Primary" : @"Secondary"];
-                    UIColor *colorAtKey = [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:key fallback:(index % 2 == 0 ? @"e8a7bf" : @"d795f8")];
+                    NSString *colorFromDefaults = [preferences objectForKey:key] ?: (index % 2 == 0 ? @"e8a7bf" : @"d795f8");
+                    UIColor *colorAtKey = [GcColorPickerUtils colorWithHex:colorFromDefaults];
 
                     NSDictionary *original = [Utilities convertToHSVColor:originalColor];
                     NSDictionary *custom = [Utilities convertToHSVColor:colorAtKey];
 
+                    // Use the custom color, with 40% saturation influence and a 20% brightness influence.
+                    // Alpha is not affected by the custom colors. This is intentional.
                     return [UIColor colorWithHue:[[custom objectForKey:@"hue"] doubleValue]
                                       saturation:[Utilities averageWithSplit:0.40 firstValue:[original objectForKey:@"saturation"] secondValue:[custom objectForKey:@"saturation"]]
                                       brightness:[Utilities averageWithSplit:0.20 firstValue:[original objectForKey:@"brightness"] secondValue:[custom objectForKey:@"brightness"]]
                                            alpha:[[original objectForKey:@"alpha"] doubleValue]];
                 }
 
-                return [GcColorPickerUtils colorFromDefaults:BUNDLE_ID withKey:name fallback:originalColorHex];
+                // It's necessary to use NSUserDefaults instead of GcColorPickerUtils here
+                // so that we can take advantage of libSandy for the preferences
+                NSString *colorFromDefaults = [preferences objectForKey:name] ?: originalColorHex;
+                UIColor *parsedColor = [GcColorPickerUtils colorWithHex:colorFromDefaults];
+
+                return parsedColor;
             }),
             (IMP *)&originalColorWithCGColor
         ); 

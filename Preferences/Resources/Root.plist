@@ -18,7 +18,7 @@
             <key>title</key>
             <string>Flora</string>
             <key>description</key>
-            <string>Created with &lt;3 by Rosie</string>
+            <string>Created with  ₊˚♡︎  by Rosie</string>
             <key>height</key>
             <real>205</real>
 		</dict>
@@ -42,6 +42,8 @@
 			<string>com.rosiepie.flora</string>
 			<key>key</key>
 			<string>mode</string>
+            <key>title</key>
+            <string>Choose functionality:</string>
             <key>options</key>
             <array>
                 <dict>
@@ -62,7 +64,7 @@
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
-                <string>square.fill.text.grid.1x2</string>
+                <string>heart.text.square.fill</string>
             </dict>
 		</dict>
 
@@ -70,7 +72,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Simple Colors</string>
+			<string>✦   Colors</string>
             <key>floraColorType</key>
 	        <string>simple</string>
 		</dict>
@@ -125,7 +127,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Advanced Colors</string>
+			<string>✦   Colors</string>
             <key>floraColorType</key>
 	        <string>advanced</string>
 		</dict>
@@ -219,7 +221,44 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Utilities</string>
+			<string>✦   Manage</string>
+            <key>footerText</key>
+            <string>The tweak's settings such as enabled state and functionality type are not exported due to their nature. Only colors can be exported and imported by these buttons.</string>
+            <key>isStaticText</key>
+            <true/>
+		</dict>
+        <dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Import Colors</string>
+			<key>action</key>
+			<string>importColors</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>square.and.arrow.down</string>
+            </dict>
+		</dict>
+        <dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Export Colors</string>
+			<key>action</key>
+			<string>exportColors</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>square.and.arrow.up</string>
+            </dict>
+		</dict>
+
+        <dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>✦   Utilities</string>
 		</dict>
         <dict>
 			<key>cell</key>
@@ -231,7 +270,7 @@
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
-                <string>slowmo</string>
+                <string>arrow.counterclockwise</string>
             </dict>
 		</dict>
         <dict>
@@ -252,7 +291,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Credits</string>
+			<string>✦   Credits</string>
             <key>id</key>
             <string>credits</string>
 		</dict>
@@ -262,7 +301,7 @@
             <key>cellClass</key>
             <string>GcSocialCell</string>
             <key>userName</key>
-            <string>Source Code</string>
+            <string>Source Code  ˶ᵔ ᵕ ᵔ˶</string>
             <key>subtitle</key>
             <string>You can view the source of my terrible code!</string>
             <key>accessoryType</key>

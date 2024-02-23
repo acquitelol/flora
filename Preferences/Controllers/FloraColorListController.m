@@ -62,8 +62,8 @@
 
 - (void)initRespringButton {
 	UIButton *respringButton = [UIButton buttonWithType:UIButtonTypeCustom];
-	respringButton.frame = CGRectMake(0,0,26,26);
-	[respringButton setImage:[[UIImage systemImageNamed:@"slowmo"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+	respringButton.frame = CGRectMake(0, 0, 21, 24);
+	[respringButton setImage:[[UIImage systemImageNamed:@"arrow.counterclockwise"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
 	respringButton.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
 	respringButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
     [respringButton addTarget:self action:@selector(promptToRespring) forControlEvents:UIControlEventTouchUpInside];
@@ -73,7 +73,7 @@
 }
 
 - (void)promptToRespring {
-    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?"  handler:^{
+    UIAlertController *respringAlert = [Utilities alertWithDescription:@"Are you sure you want to respring?" handler:^{
         [Utilities respring];
     }];
 

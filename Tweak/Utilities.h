@@ -7,6 +7,9 @@
 #import <Preferences/PSSpecifier.h>
 #import <Preferences/PSTableCell.h>
 #import <GcUniversal/GcColorPickerUtils.h>
+#import <SpringBoardServices/SBSRelaunchAction.h>
+#import <FrontBoardServices/FBSSystemService.h>
+#import <zlib.h>
 #import "Constants.h"
 
 @interface Utilities : NSObject
@@ -15,9 +18,10 @@
 + (NSDictionary *)convertToHSVColor:(UIColor *)color;
 + (double)averageWithSplit:(double)split firstValue:(id)firstValue secondValue:(id)secondValue;
 + (void)respring;
-+ (void)enumerateProcessesUsingBlock:(void (^)(pid_t pid, NSString *executablePath, BOOL *stop))enumerator;
-+ (void)killProcess:(NSString *)processName;
 + (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler;
++ (UIAlertController *)alertWithDescription:(NSString *)description;
++ (NSData *)compressData:(NSData *)uncompressedData;
++ (NSData *)decompressData:(NSData *)compressedData;
 @end
 
 @interface GcColorPickerCell : PSTableCell
