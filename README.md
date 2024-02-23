@@ -14,11 +14,31 @@
       <th>Files</th>
     </tr>
     <tr>
-      <td><div style="width: 110px; overflow-x: scroll;"><img src="Screenshots/Advanced.PNG"></div></td>
-      <td><div style="width: 110px; overflow-x: scroll;"><img src="Screenshots/Simple.PNG"></div></td>
-      <td><div style="width: 110px; overflow-x: scroll;"><img src="Screenshots/Calculator.PNG"></div></td>
-      <td><div style="width: 110px; overflow-x: scroll;"><img src="Screenshots/Photos.PNG"></div></td>
-      <td><div style="width: 110px; overflow-x: scroll;"><img src="Screenshots/Files.PNG"></div></td>
+      <td>
+        <div style="width: 110px;">
+            <img src="Screenshots/Advanced.PNG" />
+        </div>
+      </td>
+      <td>
+        <div style="width: 110px;">
+            <img src="Screenshots/Simple.PNG" />
+        </div>
+      </td>
+      <td>
+        <div style="width: 110px;">
+            <img src="Screenshots/Calculator.PNG" />
+        </div>
+      </td>
+      <td>
+        <div style="width: 110px;">
+            <img src="Screenshots/Photos.PNG" />
+        </div>
+      </td>
+      <td>
+        <div style="width: 110px;">
+            <img src="Screenshots/Files.PNG" />
+        </div>
+      </td>
     </tr>
   </table>
 </div>
