@@ -30,8 +30,6 @@
 
 ### ♡ **Features**
 
-### ♡ **Features**
-
 - **Simple** Mode:
     - **2 colors** theme the entirety of iOS.
     - The colors have a 40% saturation influence by default.
