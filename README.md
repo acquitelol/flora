@@ -9,7 +9,7 @@
     <tr>
       <td width="33%">
         <div>
-            <img src="Screenshots/Flora.PNG" />
+            <img src="Screenshots/Flora.png" />
         </div>
       </td>
       <td width="33%">
@@ -19,7 +19,7 @@
       </td>
       <td width="33%" >
         <div>
-            <img src="Screenshots/Useful.PNG" />
+            <img src="Screenshots/Useful.png" />
         </div>
       </td>
     </tr>
