@@ -5,6 +5,7 @@
     FloraPreferenceObserver *primaryColorObserver;
     FloraPreferenceObserver *secondaryColorObserver;
     FloraPreferenceObserver *enableObserver;
+    FloraPreferenceObserver *disableInAppsObserver;
     NSUserDefaults *preferences;
     UIButton *respringButton;
 }
@@ -14,6 +15,7 @@
 
     preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
     BOOL staticEnabled = [[preferences objectForKey:@"staticEnabled"] boolValue];
+    BOOL staticDisableInApps = [[preferences objectForKey:@"staticDisableInApps"] boolValue];
     [self initRespringButton:staticEnabled];
 
     modeObserver = [[FloraPreferenceObserver alloc] initWithKey:@"mode" withChangeHandler:^() {
@@ -36,6 +38,14 @@
                             respringButton.alpha = staticEnabled == currentEnabled ? 0.0 : 1.0;
                         } 
                         completion:nil];
+    }];
+
+    disableInAppsObserver = [[FloraPreferenceObserver alloc] initWithKey:@"disableInApps" withChangeHandler:^() {
+        BOOL currentDisableInApps = [[preferences objectForKey:@"disableInApps"] boolValue];
+
+        if (staticDisableInApps != currentDisableInApps) {
+            [self promptToRespring];
+        }
     }];
 
     return self;
@@ -144,6 +154,11 @@
     [self presentViewController:failedAlert animated:YES completion:nil];
 }
 
+- (void)displayError:(NSString *)error {
+    UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to import colors (ó﹏ò ｡)\n\n%@", error]];
+    [self presentViewController:failedAlert animated:YES completion:nil];
+}
+
 - (void)importColors {
     UIAlertController *importAlert = [UIAlertController alertControllerWithTitle:@"Import colors"
                                                                          message:nil
@@ -160,27 +175,33 @@
         // This data is a compressed base-64 string. It must be decompressed before it can be consumed.
         NSError *error = nil;
         NSData *compressedData = [[NSData alloc] initWithBase64EncodedString:enteredText options:0];
+
+        if (!compressedData) {
+            [self displayError:@"Invalid base64 string."];
+            return;
+        }
+
         NSData *jsonData = [Utilities decompressData:compressedData];
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
 
         if (!dictionary || error != nil) {
-            UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to import colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
-            [self presentViewController:failedAlert animated:YES completion:nil];
-        } else {
-            for (NSString *key in dictionary) {
-                id value = dictionary[key];
-
-                [preferences setObject:value forKey:key];
-            }
-
-            // We don't have to reload specifiers here because there are already observers
-            // which await for changes to the properties that matter like simple colors
-            UIAlertController *successAlert = [Utilities alertWithDescription:@"Successfully imported colors! (≧◡≦)\n\nWould you like to respring now?" handler:^{
-                [Utilities respring];
-            }];
-
-            [self presentViewController:successAlert animated:YES completion:nil];
+            [self displayError:[error localizedDescription]];
+            return;
         }
+
+        for (NSString *key in dictionary) {
+            id value = dictionary[key];
+
+            [preferences setObject:value forKey:key];
+        }
+
+        // We don't have to reload specifiers here because there are already observers
+        // which await for changes to the properties that matter like simple colors
+        UIAlertController *successAlert = [Utilities alertWithDescription:@"Successfully imported colors! (≧◡≦)\n\nWould you like to respring now?" handler:^{
+            [Utilities respring];
+        }];
+
+        [self presentViewController:successAlert animated:YES completion:nil];
     }];
 
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
@@ -199,8 +220,7 @@
     NSMutableDictionary *dictionary = [[NSDictionary dictionaryWithContentsOfURL:url error:&error] mutableCopy] ?: [NSMutableDictionary new];
 
     if (!dictionary || error) {
-        UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to export colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
-        [self presentViewController:failedAlert animated:YES completion:nil];
+        [self displayError:[error localizedDescription]];
         return;
     }
 
@@ -212,8 +232,7 @@
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
 
     if (!jsonData || error) {
-        UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to export colors (ó﹏ò ｡)\n\n%@", error.localizedDescription]];
-        [self presentViewController:failedAlert animated:YES completion:nil];
+        [self displayError:[error localizedDescription]];
         return;
     }
 

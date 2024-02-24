@@ -20,7 +20,6 @@ failed() {
     exit 1
 }
 
-
 task() {
     doing "$1"
     if sh -c "$2"; then

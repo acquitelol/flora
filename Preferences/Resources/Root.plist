@@ -127,6 +127,55 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
+			<string>✦   Influence</string>
+            <key>floraColorType</key>
+	        <string>simple</string>
+            <key>footerText</key>
+            <string>A value of 0 saturation influence means that the color maintains its original saturation, while a value of 1 means the color uses the saturation of the custom color only.</string>
+		</dict>
+        <dict>
+            <key>cell</key>
+            <string>PSStaticTextCell</string>
+            <key>cellClass</key>
+            <string>FloraSliderCell</string>
+            <key>default</key>
+            <real>0.40</real>
+            <key>key</key>
+            <string>floraSaturationInfluence</string>
+            <key>label</key>
+            <string>Saturation</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>tag.fill</string>
+            </dict>
+            <key>floraColorType</key>
+	        <string>simple</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSStaticTextCell</string>
+            <key>cellClass</key>
+            <string>FloraSliderCell</string>
+            <key>default</key>
+            <real>0.20</real>
+            <key>key</key>
+            <string>floraLightnessInfluence</string>
+            <key>label</key>
+            <string>Lightness</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>eye</string>
+            </dict>
+            <key>floraColorType</key>
+	        <string>simple</string>
+        </dict>
+
+        <dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
 			<string>✦   Colors</string>
             <key>floraColorType</key>
 	        <string>advanced</string>
@@ -284,6 +333,23 @@
             <dict>
                 <key>name</key>
                 <string>trash.fill</string>
+            </dict>
+		</dict>
+        <dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>label</key>
+			<string>Disable in Apps</string>
+            <key>key</key>
+            <string>disableInApps</string>
+            <key>default</key>
+            <false/>
+            <key>defaults</key>
+            <string>com.rosiepie.flora</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>circle.grid.3x3.fill</string>
             </dict>
 		</dict>
 

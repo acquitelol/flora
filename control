@@ -1,8 +1,8 @@
 Package: com.rosiepie.flora
 Name: Flora
-Version: 1.0.1
+Version: 1.0.2
 Architecture: iphoneos-arm
-Description: Customize all of your colors with style
+Description: A modern color changer, built for today's jailbreaks.
 Maintainer: Rosie
 Author: Rosie
 Section: Tweaks
