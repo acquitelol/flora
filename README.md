@@ -4,40 +4,22 @@
 
 #### Flora was built to be the successor to older tweaks like [Kaleidoscope](https://sparkdev.me/) or [Spectrum](https://github.com/Skittyblock/Spectrum), but with a modern feel, built for the today, to run on iOS 14+.
 
-
 <div style="overflow-x: auto;">
   <table>
     <tr>
-      <th>Advanced</th>
-      <th>Simple</th>
-      <th>Calculator</th>
-      <th>Photos</th>
-      <th>Files</th>
-    </tr>
-    <tr>
-      <td width="20%">
+      <td width="33%">
         <div>
-            <img src="Screenshots/Advanced.PNG" />
+            <img src="Screenshots/Flora.PNG" />
         </div>
       </td>
-      <td width="20%">
+      <td width="33%">
         <div>
             <img src="Screenshots/Simple.PNG" />
         </div>
       </td>
-      <td width="20%" >
+      <td width="33%" >
         <div>
-            <img src="Screenshots/Calculator.PNG" />
-        </div>
-      </td>
-      <td width="20%">
-        <div>
-            <img src="Screenshots/Photos.PNG" />
-        </div>
-      </td>
-      <td width="20%">
-        <div>
-            <img src="Screenshots/Files.PNG" />
+            <img src="Screenshots/Useful.PNG" />
         </div>
       </td>
     </tr>
