@@ -30,21 +30,25 @@
 
 ### ♡ **Features**
 
-- Allows you to change all of the **colors** on iOS:
-  - **Simple** Mode:
-    - **2 colors** theme all of the iOS colors
-    - The colors have a 40% saturation influence
-    - The colors have a 20% lightness influence
-    - The alpha of the colors has no influence
-  - **Advanced** Mode:
-    - You can manually choose every iOS color.
-    - The alpha of the color does influence the real color
+### ♡ **Features**
+
+- **Simple** Mode:
+    - **2 colors** theme the entirety of iOS.
+    - The colors have a 40% saturation influence by default.
+    - The colors have a 20% lightness influence by default.
+    - The alpha of the colors has no influence.
+    - You can choose your own influences. For example, a saturation influence of 0 means that the color uses its original saturation while a saturation influence of 1 means that it uses the saturation of the original color. The lightness influence works the same way! You can also go in-between, and find the best influence for your colors!
+
+- **Advanced** Mode:
+    - You can choose every color manually.
+    - The alpha of the color you choose does influence the real color.
 
 - Allows you to **Export/Import** your colors!
   - Simply go to Flora's preferences and tap on the **Export** and **Import** buttons!
 
 - Colors are themed inside **Apps**!
   - Enable Flora and watch as your colors magically change in all of your applications too, thanks to [libSandy](https://github.com/opa334/libSandy)
+  - You can disable this from Flora's preference page in **Settings*!
 
 <hr />
 
