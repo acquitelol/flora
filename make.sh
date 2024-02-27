@@ -30,5 +30,11 @@ task() {
 }
 
 task "Clearing packages directory" "rm -rf packages/*;"
-task "Making tweak" "gmake package && [ -e \$(find packages/*.deb) ];"
-task "Renaming package filename" "find packages/*.deb -exec sh -c 'mv \"\$0\" packages/Flora.deb' {} \;"
+
+task "Cleaning paths" "gmake clean;"
+task "Making rootful tweak" "gmake package && [ -e \$(find packages/com.rosiepie.flora*.deb) ];"
+task "Renaming package filename" "find packages/com.rosiepie.flora*.deb -exec sh -c 'mv \"\$0\" packages/Flora.rootful.deb' {} \;"
+
+task "Cleaning paths" "gmake clean;"
+task "Making rootless tweak" "gmake package THEOS_PACKAGE_SCHEME=rootless && [ -e \$(find packages/com.rosiepie.flora*.deb) ];"
+task "Renaming package filename" "find packages/com.rosiepie.flora*.deb -exec sh -c 'mv \"\$0\" packages/Flora.rootless.deb' {} \;"
