@@ -378,7 +378,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>✦   Credits</string>
+			<string>✦   About</string>
             <key>id</key>
             <string>credits</string>
 		</dict>
@@ -398,6 +398,19 @@
             <key>URL</key>
             <string>https://github.com/acquitelol/flora</string>
         </dict>
+        <dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Open Debugger</string>
+			<key>action</key>
+			<string>openDebugger</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>square.on.square</string>
+            </dict>
+		</dict>
 	</array>
 	<key>title</key>
 	<string>Flora</string>

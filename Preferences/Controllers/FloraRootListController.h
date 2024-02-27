@@ -2,6 +2,7 @@
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
 #import <Preferences/PSTableCell.h>
+#import <libSandy.h>
 #import "../../Tweak/Utilities.h"
 #import "../Observers/FloraPreferenceObserver.h"
 

@@ -241,4 +241,52 @@
     [self presentViewController:successAlert animated:YES completion:nil];
 }
 
+- (void)openDebugger {
+    // Basic information
+    NSString *information = @"Feel free to screenshot this and send to the developer for debugging purposes! (≧◡≦)";
+    NSString *bundleId = [NSString stringWithFormat:@"Bundle ID: %@", BUNDLE_ID];
+    NSString *packageScheme = [NSString stringWithFormat:@"Package Scheme: %@", PACKAGE_SCHEME];
+    NSString *spacer = @"";
+
+    // Debug information
+    NSString *libSandyWorking = [NSString stringWithFormat:@"Does libSandy work? %@", libSandy_works() ? @"✓" : @"✗"];
+
+    int result = libSandy_applyProfile("Flora_Preferences");
+
+    bool libSandyError = result == kLibSandyErrorXPCFailure;
+    NSString *suiteName = libSandyError ? BUNDLE_ID : FS_PREFERENCES(BUNDLE_ID);
+    preferences = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
+    id enabled = [preferences objectForKey:@"enabled"];
+
+    NSString *preferencesWorking = [NSString stringWithFormat:@"Can you read preferences? %@", !libSandyError && (enabled != nil) ? @"✓" : @"✗"];
+    NSString *disableInApps = [NSString stringWithFormat:@"Disabled in apps? %@", [preferences boolForKey:@"disableInApps"] ? @"✓" : @"✗"];
+    NSString *whiteColorEnabled = [NSString stringWithFormat:@"White color enabled? %@", [preferences boolForKey:@"whiteColorEnabled"] ? @"✓" : @"✗"];
+
+    NSString *primaryColor = [preferences objectForKey:@"floraPrimaryColor"];
+    NSString *secondaryColor = [preferences objectForKey:@"floraSecondaryColor"];
+
+    NSString *primaryColorString = [NSString stringWithFormat:@"Primary Color: %@", primaryColor];
+    NSString *secondaryColorString = [NSString stringWithFormat:@"Secondary Color: %@", secondaryColor];
+
+    NSArray *strings = @[
+        information,
+        spacer,
+        bundleId,
+        packageScheme,
+        spacer,
+        libSandyWorking,
+        preferencesWorking,
+        disableInApps,
+        whiteColorEnabled,
+        spacer,
+        primaryColorString,
+        secondaryColorString
+    ];
+
+    NSString *debugInformation = [strings componentsJoinedByString:@"\n"];
+
+    UIAlertController *failedAlert = [Utilities alertWithDescription:debugInformation];
+    [self presentViewController:failedAlert animated:YES completion:nil];
+}
+
 @end

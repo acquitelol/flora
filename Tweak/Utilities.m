@@ -56,8 +56,9 @@ static int compareMethods(const void *method1, const void *method2) {
     int redInt = (int)(red * 255.0);
     int greenInt = (int)(green * 255.0);
     int blueInt = (int)(blue * 255.0);
+    int alphaInt = (int)(alpha * 255.0);
 
-    return [NSString stringWithFormat:@"#%02X%02X%02X", redInt, greenInt, blueInt];
+    return [NSString stringWithFormat:@"#%02X%02X%02X%02X", redInt, greenInt, blueInt, alphaInt];
 }
 
 + (NSDictionary *)convertToHSVColor:(UIColor *)color {
