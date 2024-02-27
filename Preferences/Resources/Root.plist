@@ -280,9 +280,9 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Import Colors</string>
+			<string>Import Data</string>
 			<key>action</key>
-			<string>importColors</string>
+			<string>importData</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -293,9 +293,9 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Export Colors</string>
+			<string>Export Data</string>
 			<key>action</key>
-			<string>exportColors</string>
+			<string>exportData</string>
             <key>iconImageSystem</key>
             <dict>
                 <key>name</key>
@@ -308,6 +308,10 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>✦   Utilities</string>
+            <key>footerText</key>
+            <string>Note: The white color causes some issues such as app tinting on the home screen, crashing using the Chinese Handwriting keyboard, and maybe more. Enable at your own discretion.</string>
+            <key>isStaticText</key>
+            <true/>
 		</dict>
         <dict>
 			<key>cell</key>
@@ -350,6 +354,23 @@
             <dict>
                 <key>name</key>
                 <string>circle.grid.3x3.fill</string>
+            </dict>
+		</dict>
+        <dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>label</key>
+			<string>Enable White Color</string>
+            <key>key</key>
+            <string>whiteColorEnabled</string>
+            <key>default</key>
+            <false/>
+            <key>defaults</key>
+            <string>com.rosiepie.flora</string>
+            <key>iconImageSystem</key>
+            <dict>
+                <key>name</key>
+                <string>bin.xmark.fill</string>
             </dict>
 		</dict>
 

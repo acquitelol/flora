@@ -2,7 +2,7 @@
 
 NSUserDefaults *preferences;
 
-%ctor {
+static void init_preferences() {
     // We first get the extended preference plist
     int result = libSandy_applyProfile("Flora_Preferences");
 
@@ -12,7 +12,7 @@ NSUserDefaults *preferences;
 
     id disableInAppsObject = [preferences objectForKey:@"disableInApps"];
     [preferences setObject:disableInAppsObject forKey:@"staticDisableInApps"];
-    BOOL isDisabledInApps = [[preferences objectForKey:@"staticDisableInApps"] boolValue];
+    BOOL isDisabledInApps = [preferences boolForKey:@"staticDisableInApps"];
 
     // If the user has disabled Flora in apps, then load preferences again with just the bundle id
     // This won't exist in the context of the sandbox, so none of the colors would be themed anymore.
@@ -21,10 +21,64 @@ NSUserDefaults *preferences;
     if (isDisabledInApps) {
         preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
     }
+}
+
+// Hooks for theming iMessages bubble colors
+%hook CKUITheme
+
+- (id)blue_balloonColors {
+    if (!preferences) {
+        init_preferences();
+    }
+
+    if ([preferences boolForKey:@"enabled"]) {
+        UIColor *color = [UIColor systemBlueColor];
+        return [Utilities generateMessageBubbleColorWithColor:color];
+    }
+
+    return %orig;
+}
+
+- (id)green_balloonColors {
+	if (!preferences) {
+        init_preferences();
+    }
+
+    if ([preferences boolForKey:@"enabled"]) {
+        UIColor *color = [UIColor systemGreenColor];
+        return [Utilities generateMessageBubbleColorWithColor:color];
+    }
+
+    return %orig;
+}
+
+%end
+
+// Hooks for fixing theming on Safari
+%hook UIColor
+
++ (UIColor *)sf_safariAccentColor {
+    if (!preferences) {
+        init_preferences();
+    }
+
+    if ([preferences boolForKey:@"enabled"]) {
+        return [UIColor systemBlueColor];
+    }
+
+    return %orig;
+}
+
+%end
+
+%ctor {
+    if (!preferences) {
+        init_preferences();
+    }
 
     id enabledObject = [preferences objectForKey:@"enabled"];
     [preferences setObject:enabledObject forKey:@"staticEnabled"];
-    BOOL isEnabled = [[preferences objectForKey:@"staticEnabled"] boolValue];
+    BOOL isEnabled = [preferences boolForKey:@"staticEnabled"];
 
     if (!isEnabled) {
         NSLog(@"[Flora] Tweak is disabled. Exiting...");
@@ -39,6 +93,11 @@ NSUserDefaults *preferences;
             selector,
             imp_implementationWithBlock(^(id self, SEL _cmd) {
                 UIColor *originalColor = originalColorWithCGColor(self, _cmd);
+
+                if ([name isEqualToString:@"whiteColor"] && ![preferences boolForKey:@"whiteColorEnabled"]) {
+                    return originalColor;
+                }
+
                 NSString *originalColorHex = [Utilities hexStringFromColor:originalColor];
 
                 if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {

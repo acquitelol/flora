@@ -155,17 +155,17 @@
 }
 
 - (void)displayError:(NSString *)error {
-    UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to import colors (ó﹏ò ｡)\n\n%@", error]];
+    UIAlertController *failedAlert = [Utilities alertWithDescription:[NSString stringWithFormat:@"Failed to import preferences (ó﹏ò ｡)\n\n%@", error]];
     [self presentViewController:failedAlert animated:YES completion:nil];
 }
 
-- (void)importColors {
-    UIAlertController *importAlert = [UIAlertController alertControllerWithTitle:@"Import colors"
+- (void)importData {
+    UIAlertController *importAlert = [UIAlertController alertControllerWithTitle:@"Import preferences"
                                                                          message:nil
                                                                   preferredStyle:UIAlertControllerStyleAlert];
 
     [importAlert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder = @"Please enter encoded color data...";
+        textField.placeholder = @"Please enter encoded preference data...";
     }];
 
     UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -197,7 +197,7 @@
 
         // We don't have to reload specifiers here because there are already observers
         // which await for changes to the properties that matter like simple colors
-        UIAlertController *successAlert = [Utilities alertWithDescription:@"Successfully imported colors! (≧◡≦)\n\nWould you like to respring now?" handler:^{
+        UIAlertController *successAlert = [Utilities alertWithDescription:@"Successfully imported preferences! (≧◡≦)\n\nWould you like to respring now?" handler:^{
             [Utilities respring];
         }];
 
@@ -212,7 +212,7 @@
     [self presentViewController:importAlert animated:YES completion:nil];
 }
 
-- (void)exportColors {
+- (void)exportData {
     [preferences synchronize];
 
     NSError *error;
@@ -222,11 +222,6 @@
     if (!dictionary || error) {
         [self displayError:[error localizedDescription]];
         return;
-    }
-
-    for (NSString *key in [dictionary allKeys]) {
-        // Remove all the keys which aren't colors
-        if (![key hasSuffix:@"Color"]) [dictionary removeObjectForKey:key];
     }
 
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
@@ -242,7 +237,7 @@
     NSString *compressedString = [compressedData base64EncodedStringWithOptions:0];
     [UIPasteboard generalPasteboard].string = compressedString;
 
-    UIAlertController *successAlert = [Utilities alertWithDescription:@"Exported colors to clipboard! (≧◡≦)"];
+    UIAlertController *successAlert = [Utilities alertWithDescription:@"Exported preferences to clipboard! (≧◡≦)"];
     [self presentViewController:successAlert animated:YES completion:nil];
 }
 

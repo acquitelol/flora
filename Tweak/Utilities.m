@@ -72,15 +72,38 @@ static int compareMethods(const void *method1, const void *method2) {
     };
 }
 
++ (NSArray<UIColor *> *)generateMessageBubbleColorWithColor:(UIColor *)color {
+    NSDictionary *original = [self convertToHSVColor:color];
+
+    double originalBrightness = [[original objectForKey:@"brightness"] doubleValue];
+    double modifiedBrightness = originalBrightness < 0.2 ? originalBrightness : originalBrightness - 0.2;
+
+    UIColor *darkerColor = [UIColor colorWithHue:[[original objectForKey:@"hue"] doubleValue]
+                                      saturation:[[original objectForKey:@"saturation"] doubleValue]
+                                      brightness:modifiedBrightness
+                                           alpha:[[original objectForKey:@"alpha"] doubleValue]];
+
+    return @[color, darkerColor];
+}
+
 + (double)averageWithSplit:(double)split firstValue:(id)firstValue secondValue:(id)secondValue {
     return ([firstValue doubleValue] * (1 - split)) + ([secondValue doubleValue] * (split));
 }
 
 + (void)respring {
-    // Launch straight into the tweak's preferences page when respringing
-    NSURL *relaunchURL = [NSURL URLWithString:@"prefs:root=Flora"];
-    SBSRelaunchAction *restartAction = [SBSRelaunchAction actionWithReason:@"RestartRenderServer" options:SBSRelaunchActionOptionsFadeToBlackTransition targetURL:relaunchURL];
-    [[FBSSystemService sharedService] sendActions:[NSSet setWithObject:restartAction] withResult:nil];
+    extern char **environ;
+    pid_t pid;
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+	if ([fileManager fileExistsAtPath:@"/var/Liy/.procursus_strapped"] && ![fileManager fileExistsAtPath:@"/var/jb/usr/local/bin/Xinamine"]) {
+		const char *args[] = {"killall", "SpringBoard", NULL};
+		posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char *const *)args, environ);
+		return;
+	}
+
+    const char *args[] = {"sbreload", NULL};
+    posix_spawn(&pid, ROOT_PATH("/usr/bin/sbreload"), NULL, NULL, (char *const *)args, environ);
 }
 
 + (UIAlertController *)alertWithDescription:(NSString *)description handler:(void (^)(void))handler {

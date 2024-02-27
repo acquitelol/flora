@@ -7,7 +7,13 @@
 
 - (NSMutableArray *)specifiers {
     if (!_specifiers) {
+        NSUserDefaults *preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+
         _specifiers = [self getColorSpecifiersWithFilter:^BOOL(NSString *name) {
+            if ([name isEqualToString:@"whiteColor"] && ![preferences boolForKey:@"whiteColorEnabled"]) {
+                return false;
+            }
+
             return (
                 (![name hasPrefix:@"dynamic"]
                 && ![name hasPrefix:@"system"]
