@@ -33,6 +33,8 @@
 
         tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
         [self.contentView addGestureRecognizer:tapGestureRecognizer];
+
+        textLabel.delegate = self;
     }
 
     return self;
@@ -80,6 +82,12 @@
     NSString *formattedValue = [NSString stringWithFormat:@"%.2f", value];
     textLabel.text = formattedValue;
     [textLabel resignFirstResponder];
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [textField selectAll:nil];
 }
 
 @end

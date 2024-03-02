@@ -5,5 +5,5 @@
 - (UIViewController *)_viewControllerForAncestor;
 @end
 
-@interface FloraSliderCell : PSTableCell
+@interface FloraSliderCell : PSTableCell <UITextFieldDelegate>
 @end

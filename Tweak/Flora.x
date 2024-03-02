@@ -76,6 +76,13 @@ static void init_preferences() {
         init_preferences();
     }
 
+    [preferences registerDefaults:@{
+        @"floraPrimaryColor": @"#e8a7bfff",
+        @"floraSecondaryColor": @"#d795f8ff",
+        @"floraSaturationInfluence": 0.4,
+        @"floraLightnessInfluence": 0.2,
+    }];
+
     id enabledObject = [preferences objectForKey:@"enabled"];
     [preferences setObject:enabledObject forKey:@"staticEnabled"];
     BOOL isEnabled = [preferences boolForKey:@"staticEnabled"];
