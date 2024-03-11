@@ -6,17 +6,17 @@ red='\033[91m'
 endc='\033[0m'
 
 doing() {
-    echo "$yellow[*] $1...$endc"
+    echo -e "$yellow[*] $1...$endc"
 }
 
 finished() {
-    lowercase=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    echo "$green[+] Done $lowercase!$endc"
+    lowercase=$(echo -e "$1" | tr '[:upper:]' '[:lower:]')
+    echo -e "$green[+] Done $lowercase!$endc"
 }
 
 failed() {
-    lowercase=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    echo "$red[-] Failed $lowercase!$endc"
+    lowercase=$(echo -e "$1" | tr '[:upper:]' '[:lower:]')
+    echo -e "$red[-] Failed $lowercase!$endc"
     exit 1
 }
 
