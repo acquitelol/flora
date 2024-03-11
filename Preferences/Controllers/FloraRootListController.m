@@ -244,9 +244,15 @@
 - (void)openDebugger {
     // Basic information
     NSString *information = @"Feel free to screenshot this and send to the developer for debugging purposes! (≧◡≦)";
-    NSString *bundleId = [NSString stringWithFormat:@"Bundle ID: %@", BUNDLE_ID];
+    NSString *bundleIdentifier = [NSString stringWithFormat:@"Bundle ID: %@", BUNDLE_ID];
     NSString *packageScheme = [NSString stringWithFormat:@"Package Scheme: %@", PACKAGE_SCHEME];
     NSString *spacer = @"";
+
+    struct utsname systemInfo;
+    uname(&systemInfo);
+
+    NSString *operatingSystem = [NSString stringWithFormat:@"iOS Version: %@", [[UIDevice currentDevice] systemVersion]];
+    NSString *deviceIdentifier = [NSString stringWithFormat:@"Device ID: %@", [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]];
 
     // Debug information
     NSString *libSandyWorking = [NSString stringWithFormat:@"Does libSandy work? %@", libSandy_works() ? @"✓" : @"✗"];
@@ -264,15 +270,21 @@
 
     NSString *primaryColor = [preferences objectForKey:@"floraPrimaryColor"];
     NSString *secondaryColor = [preferences objectForKey:@"floraSecondaryColor"];
+    NSString *saturationInfluence = [preferences objectForKey:@"floraSaturationInfluence"];
+    NSString *lightnessInfluence = [preferences objectForKey:@"floraLightnessInfluence"];
 
     NSString *primaryColorString = [NSString stringWithFormat:@"Primary Color: %@", primaryColor];
     NSString *secondaryColorString = [NSString stringWithFormat:@"Secondary Color: %@", secondaryColor];
+    NSString *saturationString = [NSString stringWithFormat:@"Saturation Influence: %@", saturationInfluence];
+    NSString *lightnessString = [NSString stringWithFormat:@"Lightness Influence: %@", lightnessInfluence];
 
     NSArray *strings = @[
         information,
         spacer,
-        bundleId,
+        bundleIdentifier,
+        deviceIdentifier,
         packageScheme,
+        operatingSystem,
         spacer,
         libSandyWorking,
         preferencesWorking,
@@ -280,7 +292,9 @@
         whiteColorEnabled,
         spacer,
         primaryColorString,
-        secondaryColorString
+        secondaryColorString,
+        saturationString,
+        lightnessString
     ];
 
     NSString *debugInformation = [strings componentsJoinedByString:@"\n"];
