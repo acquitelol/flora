@@ -1,22 +1,31 @@
 #!/bin/sh
 
+type=$(ps -p $$ -o comm=)
 yellow='\033[93m'
 green='\033[92m'
 red='\033[91m'
 endc='\033[0m'
 
+print() {
+    if [ "$type" = "bash" ]; then
+        echo -e "$1"
+    else
+        echo "$1"
+    fi
+}
+
 doing() {
-    echo -e "$yellow[*] $1...$endc"
+    print "$yellow[*] $1...$endc"
 }
 
 finished() {
-    lowercase=$(echo -e "$1" | tr '[:upper:]' '[:lower:]')
-    echo -e "$green[+] Done $lowercase!$endc"
+    lowercase=$(print "$1" | tr '[:upper:]' '[:lower:]')
+    print "$green[+] Done $lowercase!$endc"
 }
 
 failed() {
-    lowercase=$(echo -e "$1" | tr '[:upper:]' '[:lower:]')
-    echo -e "$red[-] Failed $lowercase!$endc"
+    lowercase=$(print "$1" | tr '[:upper:]' '[:lower:]')
+    print "$red[-] Failed $lowercase!$endc"
     exit 1
 }
 
