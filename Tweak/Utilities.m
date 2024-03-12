@@ -33,6 +33,7 @@ static int compareMethods(const void *method1, const void *method2) {
             || ![name hasSuffix:@"Color"] 
             || [name containsString:@"_"] 
             || [name isEqualToString:@"clearColor"]
+            || [name isEqualToString:@"tintColor"]
             || [name hasPrefix:@"DMC"]
             || [name hasPrefix:@"DC"]
             || [name hasPrefix:@"mail"]

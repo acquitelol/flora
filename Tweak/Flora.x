@@ -105,8 +105,7 @@ static void init_preferences() {
                     return originalColor;
                 }
 
-                // Disable tintColor theming in Simple Mode
-                if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"] && ![name isEqualToString:@"tintColor"]) {
+                if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {
                     NSString *key = [NSString stringWithFormat:@"flora%@Color", index % 2 == 0 ? @"Primary" : @"Secondary"];
                     NSString *colorFromDefaults = [preferences objectForKey:key] ?: (index % 2 == 0 ? @"e8a7bf" : @"d795f8");
                     UIColor *colorAtKey = [GcColorPickerUtils colorWithHex:colorFromDefaults];
@@ -130,13 +129,9 @@ static void init_preferences() {
 
                 // It's necessary to use NSUserDefaults instead of GcColorPickerUtils here
                 // so that we can take advantage of libSandy for the preferences
-                NSString *colorFromDefaults = [preferences objectForKey:name];
+                NSString *originalColorHex = [Utilities hexStringFromColor:originalColor];
+                NSString *colorFromDefaults = [preferences objectForKey:name] ?: originalColorHex;
                 UIColor *parsedColor = [GcColorPickerUtils colorWithHex:colorFromDefaults];
-
-                // Fix tintColor theming in advanced mode
-                if (!parsedColor) {
-                    return originalColor;
-                }
 
                 return parsedColor;
             }),
