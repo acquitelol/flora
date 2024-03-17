@@ -63,7 +63,28 @@ static int compareMethods(const void *method1, const void *method2) {
     return [NSString stringWithFormat:@"#%02X%02X%02X%02X", redInt, greenInt, blueInt, alphaInt];
 }
 
-+ (NSDictionary *)convertToHSVColor:(UIColor *)color {
++ (UIColor *)colorFromHexString:(NSString *)hexString {
+    NSString *cleanString = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
+
+    if (cleanString.length == 6) {
+        cleanString = [cleanString stringByAppendingString:@"FF"];
+    } else if (cleanString.length != 8) {
+        return nil;
+    }
+    
+    unsigned int rgbaValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:cleanString];
+    [scanner scanHexInt:&rgbaValue];
+    
+    CGFloat red = ((rgbaValue & 0xFF000000) >> 24) / 255.0;
+    CGFloat green = ((rgbaValue & 0x00FF0000) >> 16) / 255.0;
+    CGFloat blue = ((rgbaValue & 0x0000FF00) >> 8) / 255.0;
+    CGFloat alpha = (rgbaValue & 0x000000FF) / 255.0;
+    
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
++ (NSDictionary *)hsvColorWithColor:(UIColor *)color {
     CGFloat hue, saturation, brightness, alpha;
     [color getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
 
@@ -75,8 +96,30 @@ static int compareMethods(const void *method1, const void *method2) {
     };
 }
 
++ (UIColor *)simpleColorWithIndex:(int)index preferences:(NSUserDefaults *)preferences originalColor:(UIColor *)originalColor {
+    NSString *key = [NSString stringWithFormat:@"flora%@Color", index % 2 == 0 ? @"Primary" : @"Secondary"];
+    NSString *colorFromDefaults = [preferences objectForKey:key] ?: (index % 2 == 0 ? @"e8a7bf" : @"d795f8");
+    UIColor *colorAtKey = [self colorFromHexString:colorFromDefaults];
+
+    NSDictionary *original = [Utilities hsvColorWithColor:originalColor];
+    NSDictionary *custom = [Utilities hsvColorWithColor:colorAtKey];
+
+    id saturationInfluence = [preferences objectForKey:@"floraSaturationInfluence"];
+    id lightnessInfluence = [preferences objectForKey:@"floraLightnessInfluence"];
+
+    double saturationSplit = saturationInfluence != nil ? [saturationInfluence doubleValue] : 0.40;
+    double lightnessSplit = lightnessInfluence != nil ? [lightnessInfluence doubleValue] : 0.20;
+
+    // Use the custom color, with 40% saturation influence and a 20% brightness influence.
+    // Alpha is not affected by the custom colors. This is intentional.
+    return [UIColor colorWithHue:[[custom objectForKey:@"hue"] doubleValue]
+                        saturation:[self averageWithSplit:saturationSplit firstValue:[original objectForKey:@"saturation"] secondValue:[custom objectForKey:@"saturation"]]
+                        brightness:[self averageWithSplit:lightnessSplit firstValue:[original objectForKey:@"brightness"] secondValue:[custom objectForKey:@"brightness"]]
+                            alpha:[[original objectForKey:@"alpha"] doubleValue]];
+}
+
 + (NSArray<UIColor *> *)generateMessageBubbleColorWithColor:(UIColor *)color {
-    NSDictionary *original = [self convertToHSVColor:color];
+    NSDictionary *original = [self hsvColorWithColor:color];
 
     double originalBrightness = [[original objectForKey:@"brightness"] doubleValue];
     double modifiedBrightness = originalBrightness < 0.2 ? originalBrightness : originalBrightness - 0.2;

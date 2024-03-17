@@ -31,15 +31,15 @@ static UIColor *getBubbleColor(NSString *type) {
     NSString *color;
 
     if ([type isEqualToString:@"blue"]) {
-        color = [preferences objectForKey:@"blueBubbleColor"] ?: [UIColor systemBlueColor];
+        color = [preferences objectForKey:@"blueBubbleColor"] ?: [Utilities hexStringFromColor:[UIColor systemBlueColor]];
     }
 
     if ([type isEqualToString:@"green"]) {
-        color = [preferences objectForKey:@"greenBubbleColor"] ?: [UIColor systemGreenColor];
+        color = [preferences objectForKey:@"greenBubbleColor"] ?: [Utilities hexStringFromColor:[UIColor systemGreenColor]];
     }
 
     if (!color) return nil;
-    return [GcColorPickerUtils colorWithHex:color];
+    return [Utilities colorFromHexString:color];
 }
 
 %group Base
@@ -125,15 +125,16 @@ static UIColor *getBubbleColor(NSString *type) {
         init_preferences();
     }
 
-    if ([preferences boolForKey:@"enabled"]) {
-        NSString *originalColorHex = [Utilities hexStringFromColor:[self interactionTintColor]];
-        NSString *colorFromDefaults = [preferences objectForKey:@"musicTintColor"] ?: originalColorHex;
-
-        %orig([GcColorPickerUtils colorWithHex:colorFromDefaults]);
+    if (![preferences boolForKey:@"enabled"]) return %orig;
+    if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {
+        %orig([Utilities simpleColorWithIndex:0 preferences:preferences originalColor:[self interactionTintColor]]);
         return;
     }
+    
+    NSString *originalColorHex = [Utilities hexStringFromColor:[self interactionTintColor]];
+    NSString *colorFromDefaults = [preferences objectForKey:@"musicTintColor"] ?: originalColorHex;
 
-    %orig;
+    %orig([Utilities colorFromHexString:colorFromDefaults]);
 }
 
 %end
@@ -182,32 +183,14 @@ static UIColor *getBubbleColor(NSString *type) {
                 }
 
                 if ([[preferences objectForKey:@"mode"] isEqualToString:@"Simple"]) {
-                    NSString *key = [NSString stringWithFormat:@"flora%@Color", index % 2 == 0 ? @"Primary" : @"Secondary"];
-                    NSString *colorFromDefaults = [preferences objectForKey:key] ?: (index % 2 == 0 ? @"e8a7bf" : @"d795f8");
-                    UIColor *colorAtKey = [GcColorPickerUtils colorWithHex:colorFromDefaults];
-
-                    NSDictionary *original = [Utilities convertToHSVColor:originalColor];
-                    NSDictionary *custom = [Utilities convertToHSVColor:colorAtKey];
-
-                    id saturationInfluence = [preferences objectForKey:@"floraSaturationInfluence"];
-                    id lightnessInfluence = [preferences objectForKey:@"floraLightnessInfluence"];
-
-                    double saturationSplit = saturationInfluence != nil ? [saturationInfluence doubleValue] : 0.40;
-                    double lightnessSplit = lightnessInfluence != nil ? [lightnessInfluence doubleValue] : 0.20;
-
-                    // Use the custom color, with 40% saturation influence and a 20% brightness influence.
-                    // Alpha is not affected by the custom colors. This is intentional.
-                    return [UIColor colorWithHue:[[custom objectForKey:@"hue"] doubleValue]
-                                      saturation:[Utilities averageWithSplit:saturationSplit firstValue:[original objectForKey:@"saturation"] secondValue:[custom objectForKey:@"saturation"]]
-                                      brightness:[Utilities averageWithSplit:lightnessSplit firstValue:[original objectForKey:@"brightness"] secondValue:[custom objectForKey:@"brightness"]]
-                                           alpha:[[original objectForKey:@"alpha"] doubleValue]];
+                    return [Utilities simpleColorWithIndex:index preferences:preferences originalColor:originalColor];
                 }
 
                 // It's necessary to use NSUserDefaults instead of GcColorPickerUtils here
                 // so that we can take advantage of libSandy for the preferences
                 NSString *originalColorHex = [Utilities hexStringFromColor:originalColor];
                 NSString *colorFromDefaults = [preferences objectForKey:name] ?: originalColorHex;
-                UIColor *parsedColor = [GcColorPickerUtils colorWithHex:colorFromDefaults];
+                UIColor *parsedColor = [Utilities colorFromHexString:colorFromDefaults];
 
                 return parsedColor;
             }),

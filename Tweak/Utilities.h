@@ -16,7 +16,9 @@
 @interface Utilities : NSObject
 + (void)loopUIColorWithBlock:(void (^)(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass))block;
 + (NSString *)hexStringFromColor:(UIColor *)color;
-+ (NSDictionary *)convertToHSVColor:(UIColor *)color;
++ (UIColor *)colorFromHexString:(NSString *)hexString;
++ (NSDictionary *)hsvColorWithColor:(UIColor *)color;
++ (UIColor *)simpleColorWithIndex:(int)index preferences:(NSUserDefaults *)preferences originalColor:(UIColor *)originalColor;
 + (NSArray<UIColor *> *)generateMessageBubbleColorWithColor:(UIColor *)color;
 + (double)averageWithSplit:(double)split firstValue:(id)firstValue secondValue:(id)secondValue;
 + (void)respring;

@@ -144,7 +144,7 @@
         UIColor *originalColor = extraColorDefaults[i];
         if (filter && !filter(name)) continue;
 
-        NSString *hexColor = [preferences objectForKey:name] ?: originalColor;
+        NSString *hexColor = [preferences objectForKey:name] ?: [Utilities hexStringFromColor:originalColor];
         NSString *parsedName = [self parseName:parser(name)];
 
         PSSpecifier *specifier = [self generateSpecifierWithName:name parsedName:parsedName hexColor:hexColor];

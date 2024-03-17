@@ -24,6 +24,8 @@
                 || [name isEqualToString:@"magentaColor"]
                 || [name isEqualToString:@"separatorColor"]
                 || [name isEqualToString:@"musicTintColor"]
+                || [name isEqualToString:@"blueBubbleColor"]
+                || [name isEqualToString:@"greenBubbleColor"]
             );
         } parser:^(NSString *name) {
             return [name stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[name substringToIndex:1] capitalizedString]];
