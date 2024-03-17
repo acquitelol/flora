@@ -30,10 +30,11 @@ static int compareMethods(const void *method1, const void *method2) {
 
         const char *returnType = method_copyReturnType(method);
         if ((strcmp(returnType, @encode(UIColor *)) != 0) 
+            || !name
             || ![name hasSuffix:@"Color"] 
             || [name containsString:@"_"] 
             || [name isEqualToString:@"clearColor"]
-            || [name isEqualToString:@"tintColor"]
+            || [name isEqualToString:@"desiredColor"]
             || [name hasPrefix:@"DMC"]
             || [name hasPrefix:@"DC"]
             || [name hasPrefix:@"mail"]

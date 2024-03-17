@@ -4,3 +4,7 @@
 #import <substrate.h>
 #import <libSandy.h>
 #import "Utilities.h"
+
+@interface UILayoutContainerView
+@property (nonatomic, strong, readwrite) UIColor *interactionTintColor;
+@end

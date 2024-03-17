@@ -23,6 +23,27 @@ static void init_preferences() {
     }
 }
 
+static UIColor *getBubbleColor(NSString *type) {
+    if (!preferences) {
+        init_preferences();
+    }
+
+    NSString *color;
+
+    if ([type isEqualToString:@"blue"]) {
+        color = [preferences objectForKey:@"blueBubbleColor"] ?: [UIColor systemBlueColor];
+    }
+
+    if ([type isEqualToString:@"green"]) {
+        color = [preferences objectForKey:@"greenBubbleColor"] ?: [UIColor systemGreenColor];
+    }
+
+    if (!color) return nil;
+    return [GcColorPickerUtils colorWithHex:color];
+}
+
+%group Base
+
 // Hooks for theming iMessages bubble colors
 %hook CKUITheme
 
@@ -32,7 +53,7 @@ static void init_preferences() {
     }
 
     if ([preferences boolForKey:@"enabled"]) {
-        UIColor *color = [UIColor systemBlueColor];
+        UIColor *color = getBubbleColor(@"blue");
         return [Utilities generateMessageBubbleColorWithColor:color];
     }
 
@@ -45,7 +66,7 @@ static void init_preferences() {
     }
 
     if ([preferences boolForKey:@"enabled"]) {
-        UIColor *color = [UIColor systemGreenColor];
+        UIColor *color = getBubbleColor(@"green");
         return [Utilities generateMessageBubbleColorWithColor:color];
     }
 
@@ -54,7 +75,6 @@ static void init_preferences() {
 
 %end
 
-// Hooks for fixing theming on Safari
 %hook UIColor
 
 + (UIColor *)sf_safariAccentColor {
@@ -68,6 +88,55 @@ static void init_preferences() {
 
     return %orig;
 }
+
+%new
++ (UIColor *)blueBubbleColor {
+    return getBubbleColor(@"blue");
+}
+
+%new
++ (UIColor *)greenBubbleColor {
+    return getBubbleColor(@"green");
+}
+
+%end
+
+%end
+
+%group Music
+
+%hook UILayoutContainerView
+
+- (void)layoutSubviews {
+    %orig;
+
+    if (!preferences) {
+        init_preferences();
+    }
+
+    if ([preferences boolForKey:@"enabled"]) {
+        // It doesn't matter what color this is because it'll be overriden in the hook anyway
+        [self setInteractionTintColor:[UIColor clearColor]];
+    }
+}
+
+- (void)setInteractionTintColor:(UIColor *)color {
+    if (!preferences) {
+        init_preferences();
+    }
+
+    if ([preferences boolForKey:@"enabled"]) {
+        NSString *originalColorHex = [Utilities hexStringFromColor:[self interactionTintColor]];
+        NSString *colorFromDefaults = [preferences objectForKey:@"musicTintColor"] ?: originalColorHex;
+
+        %orig([GcColorPickerUtils colorWithHex:colorFromDefaults]);
+        return;
+    }
+
+    %orig;
+}
+
+%end
 
 %end
 
@@ -92,6 +161,8 @@ static void init_preferences() {
         return;
     }
 
+    %init(Base)
+
     [Utilities loopUIColorWithBlock:^(unsigned int index, SEL selector, NSString *name, Method method, Class uiColorClass) {
        __block UIColor *(*originalColorWithCGColor)(id self, SEL _cmd);
 
@@ -100,6 +171,11 @@ static void init_preferences() {
             selector,
             imp_implementationWithBlock(^(id self, SEL _cmd) {
                 UIColor *originalColor = originalColorWithCGColor(self, _cmd);
+                
+                // Disable tintColor in google services
+                if ([[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.google"] && [name isEqualToString:@"tintColor"]) {
+                    return originalColor;
+                }
 
                 if ([name isEqualToString:@"whiteColor"] && ![preferences boolForKey:@"whiteColorEnabled"]) {
                     return originalColor;
@@ -138,4 +214,9 @@ static void init_preferences() {
             (IMP *)&originalColorWithCGColor
         ); 
     }];
+
+    #pragma mark - Music Hooks
+    if ([[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Music"]) {
+        %init(Music)
+    }
 }

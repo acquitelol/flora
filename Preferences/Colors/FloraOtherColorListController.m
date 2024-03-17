@@ -17,6 +17,7 @@
                 && ![name isEqualToString:@"lightGrayColor"]
                 && ![name isEqualToString:@"magentaColor"]
                 && ![name isEqualToString:@"separatorColor"]
+                && ![name isEqualToString:@"musicTintColor"]
             );
         } parser:^(NSString *name) {
             return [name stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[name substringToIndex:1] capitalizedString]];

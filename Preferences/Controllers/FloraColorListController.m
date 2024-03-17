@@ -131,6 +131,26 @@
         [specifiers addObject:specifier];
     }];
 
+    NSUserDefaults *preferences = [[NSUserDefaults alloc] initWithSuiteName:BUNDLE_ID];
+    NSDictionary *extraColors = @{
+        @"musicTintColor": [UIColor systemRedColor]
+    };
+
+    NSArray *extraColorNames = extraColors.allKeys;
+    NSArray *extraColorDefaults = extraColors.allValues;
+
+    for (unsigned int i = 0; i < [extraColors count]; i++) {
+        NSString *name = extraColorNames[i];
+        UIColor *originalColor = extraColorDefaults[i];
+        if (filter && !filter(name)) continue;
+
+        NSString *hexColor = [preferences objectForKey:name] ?: originalColor;
+        NSString *parsedName = [self parseName:parser(name)];
+
+        PSSpecifier *specifier = [self generateSpecifierWithName:name parsedName:parsedName hexColor:hexColor];
+        [specifiers addObject:specifier];
+    }
+
     return specifiers;
 }
 
