@@ -2,6 +2,34 @@
 
 NSUserDefaults *preferences;
 
+// Suggested by jan (@yandevelop)
+static BOOL shouldExecute() {
+    NSArray *args = [[NSClassFromString(@"NSProcessInfo") processInfo] arguments];
+
+    if (args.count == 0) {
+        NSLog(@"[Flora] Skipping empty process arguments");
+        return NO;
+    }
+
+    NSString *executablePath = args.firstObject;
+    NSString *processName = [executablePath lastPathComponent];
+
+    if (executablePath && processName) {
+        BOOL isApplication = [executablePath containsString:@"/Application/"] 
+            || [executablePath containsString:@"/Applications/"] 
+            || [processName isEqualToString:@"SpringBoard"]; // SpringBoard is not an app however we want to include it
+        BOOL isFileProvider = [[processName lowercaseString] containsString:@"fileprovider"];
+        NSArray *skipList = @[@"AdSheet", @"CoreAuthUI", @"InCallService", @"MessagesNotificationViewService"];
+        
+        if (!isFileProvider && isApplication && ![skipList containsObject:processName] && ![executablePath containsString:@".appex/"]) {
+            return YES;
+        }
+    }
+
+    NSLog(@"[Flora] Skipping '%@'", executablePath);
+    return NO;
+}
+
 static void init_preferences() {
     // We first get the extended preference plist
     int result = libSandy_applyProfile("Flora_Preferences");
@@ -156,8 +184,9 @@ static UIColor *getBubbleColor(NSString *type) {
     id enabledObject = [preferences objectForKey:@"enabled"];
     [preferences setObject:enabledObject forKey:@"staticEnabled"];
     BOOL isEnabled = [preferences boolForKey:@"staticEnabled"];
+    BOOL isValidContext = shouldExecute();
 
-    if (!isEnabled) {
+    if (!isEnabled || !isValidContext) {
         NSLog(@"[Flora] Tweak is disabled. Exiting...");
         return;
     }

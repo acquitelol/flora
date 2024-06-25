@@ -1,10 +1,10 @@
 Package: com.rosiepie.flora
 Name: Flora
-Version: 1.1.4
+Version: 1.1.5
 Architecture: iphoneos-arm
 Description: A modern color changer, built for today's jailbreaks.
 Maintainer: Rosie
 Author: Rosie
 Section: Tweaks
-Depends: firmware (>= 14.0), mobilesubstrate (>= 0.9.5000), preferenceloader (>= 2.2.3), com.mrgcgamer.libgcuniversal, com.opa334.libsandy
+Depends: firmware (>= 15.0), mobilesubstrate (>= 0.9.5000), preferenceloader (>= 2.2.3), com.mrgcgamer.libgcuniversal, com.opa334.libsandy
 Icon: https://raw.githubusercontent.com/acquitelol/flora/1.0.3/Preferences/Resources/FullIcon.png
